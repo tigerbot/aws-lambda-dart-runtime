@@ -81,11 +81,19 @@ class AwsS3Bucket {
 @JsonSerializable()
 class AWSS3EventObject {
   String? key;
+
+  /// object-size in bytes
   int? size;
   String? eTag;
+
+  /// object version if bucket is versioning-enabled, otherwise `null`
+  String? versionId;
+
+  /// a string representation of a hexadecimal value used to determine event sequence, only used with `PUT`s and `DELETE`s
   String? sequencer;
 
-  AWSS3EventObject({this.key, this.size, this.eTag, this.sequencer});
+  AWSS3EventObject(
+      {this.key, this.size, this.eTag, this.versionId, this.sequencer});
 
   factory AWSS3EventObject.fromJson(Map<String, dynamic> json) =>
       _$AWSS3EventObjectFromJson(json);
