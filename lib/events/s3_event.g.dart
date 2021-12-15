@@ -101,6 +101,7 @@ AWSS3EventObject _$AWSS3EventObjectFromJson(Map<String, dynamic> json) {
     key: json['key'] as String?,
     size: json['size'] as int?,
     eTag: json['eTag'] as String?,
+    versionId: json['versionId'] as String?,
     sequencer: json['sequencer'] as String?,
   );
 }
@@ -110,6 +111,7 @@ Map<String, dynamic> _$AWSS3EventObjectToJson(AWSS3EventObject instance) =>
       'key': instance.key,
       'size': instance.size,
       'eTag': instance.eTag,
+      'versionId': instance.versionId,
       'sequencer': instance.sequencer,
     };
 
