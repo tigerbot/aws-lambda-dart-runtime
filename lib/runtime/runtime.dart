@@ -1,11 +1,11 @@
 import 'dart:async';
 
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
-import 'package:aws_lambda_dart_runtime/client/client.dart';
-import 'package:aws_lambda_dart_runtime/runtime/event.dart';
-import 'package:aws_lambda_dart_runtime/runtime/context.dart';
-import 'package:aws_lambda_dart_runtime/runtime/exception.dart';
+import 'package:aws_lambda_runtime/client/client.dart';
+import 'package:aws_lambda_runtime/runtime/event.dart';
+import 'package:aws_lambda_runtime/runtime/context.dart';
+import 'package:aws_lambda_runtime/runtime/exception.dart';
 
 /// A function which ingests and Event and a [Context]
 /// and returns a [InvocationResult]. The result is ecoded

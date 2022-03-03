@@ -1,8 +1,8 @@
 import 'package:http/http.dart';
 import 'package:test/test.dart';
 
-import 'package:aws_lambda_dart_runtime/runtime/context.dart';
-import 'package:aws_lambda_dart_runtime/client/client.dart';
+import 'package:aws_lambda_runtime/runtime/context.dart';
+import 'package:aws_lambda_runtime/client/client.dart';
 
 void main() {
   group('context', () {

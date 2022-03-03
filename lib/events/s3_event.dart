@@ -1,4 +1,4 @@
-import 'package:aws_lambda_dart_runtime/runtime/event.dart';
+import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 's3_event.g.dart';

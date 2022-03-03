@@ -44,7 +44,7 @@ Add the following snippet to your [pubspec file](https://dart.dev/tools/pub/pubs
 
 ```yaml
 dependencies:
-  aws_lambda_dart_runtime: ^1.1.0
+  aws_lambda_runtime: ^1.1.0
 ```
 
 [Docs](https://awslabs.github.io/aws-lambda-dart-runtime/) are available. They are also accessible in the [`docs`](https://github.com/awslabs/aws-lambda-dart-runtime/blob/docs) folder.
@@ -121,7 +121,7 @@ There are a number of events that come with the Dart Runtime.
 You can also register custom events.
 
 ```dart
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 class MyCustomEvent {
   factory MyCustomEvent.fromJson(Map<String, dynamic> json) =>
@@ -156,19 +156,19 @@ You will see the `lambda.zip` which you can upload manually, or use the client o
 
 What you see in the example is an example of the interface to the Dart Runtime that we created.
 
-You will have to make `aws_lambda_dart_runtime` a dependency of your project.
+You will have to make `aws_lambda_runtime` a dependency of your project.
 
 ```
 ...
 dependencies:
-  aws_lambda_dart_runtime:
+  aws_lambda_runtime:
 ...
 ```
 
 We support using multiple handlers in one executable. The following example shows to register one handler.
 
 ```dart
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 void main() async {
   /// This demo's handling an API Gateway request.
@@ -201,7 +201,7 @@ If you want to use the [Repository](https://github.com/awslabs/aws-lambda-dart-r
 
 ```yaml
 dependency_overrides:
-  aws_lambda_dart_runtime:
+  aws_lambda_runtime:
     path: <path_to_source>
 ```
 

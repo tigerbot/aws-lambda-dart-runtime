@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:io' show File;
 import 'dart:convert';
 
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 import 'package:test/test.dart';
 
 final file = 'data/apigateway_event.json';

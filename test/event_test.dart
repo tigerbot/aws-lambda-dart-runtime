@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:aws_lambda_dart_runtime/runtime/event.dart';
+import 'package:aws_lambda_runtime/runtime/event.dart';
 
 class CustomTestEvent extends Event {
   factory CustomTestEvent.fromJson(Map<String, dynamic> json) {

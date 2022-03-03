@@ -1,4 +1,4 @@
-import 'package:aws_lambda_dart_runtime/runtime/event.dart';
+import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'kinesis_data_firehose_event.g.dart';

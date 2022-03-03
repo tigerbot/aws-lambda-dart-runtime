@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:convert';
 
-import 'package:aws_lambda_dart_runtime/runtime/event.dart';
+import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'apigateway_event.g.dart';

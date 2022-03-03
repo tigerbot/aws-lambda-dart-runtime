@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 import 'package:test/test.dart';
 
 void main() {

@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:aws_lambda_dart_runtime/aws_lambda_dart_runtime.dart';
+import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 void main() {
   group('runtime exception', () {
