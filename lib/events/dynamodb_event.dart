@@ -13,11 +13,11 @@ class AwsDynamoDBUpdateRecord extends Event {
 
   /// New Image ...
   @JsonKey(name: 'NewImage')
-  final Map<String, dynamic>? oldImage;
+  final Map<String, dynamic>? newImage;
 
   /// Old Image ....
   @JsonKey(name: 'OldImage')
-  final Map<String, dynamic>? newImage;
+  final Map<String, dynamic>? oldImage;
 
   factory AwsDynamoDBUpdateRecord.fromJson(Map<String, dynamic> json) =>
       _$AwsDynamoDBUpdateRecordFromJson(json);
@@ -30,6 +30,9 @@ class AwsDynamoDBUpdateRecord extends Event {
 /// DynamoDB Update Event Record ...
 @JsonSerializable()
 class AwsDynamoDBUpdateEventRecord {
+  @JsonKey()
+  final AwsDynamoDBUpdateRecord? dynamodb;
+
   /// Event Id ...
   @JsonKey()
   final String? eventId;
@@ -59,13 +62,15 @@ class AwsDynamoDBUpdateEventRecord {
 
   Map<String, dynamic> toJson() => _$AwsDynamoDBUpdateEventRecordToJson(this);
 
-  const AwsDynamoDBUpdateEventRecord(
-      {this.eventId,
-      this.eventName,
-      this.eventSource,
-      this.eventVersion,
-      this.awsRegion,
-      this.eventSourceARN});
+  const AwsDynamoDBUpdateEventRecord({
+    this.eventId,
+    this.eventName,
+    this.eventSource,
+    this.eventVersion,
+    this.awsRegion,
+    this.eventSourceARN,
+    this.dynamodb,
+  });
 }
 
 /// DynamoDB Update Event ...
