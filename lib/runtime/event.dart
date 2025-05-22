@@ -1,5 +1,3 @@
-import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
-
 import '../events/alb_event.dart';
 import '../events/alexa_event.dart';
 import '../events/apigateway_event.dart';

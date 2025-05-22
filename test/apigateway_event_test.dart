@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:io' show File;
 import 'dart:convert';
 
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';

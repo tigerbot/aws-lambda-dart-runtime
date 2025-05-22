@@ -10,7 +10,6 @@ import '../client/client.dart';
 class Context {
   /// These are the constants used to map [Platform.environment]
   /// which are specific to the Lambda execution environment.
-  static const _kAWSLambdaHandler = '_HANDLER';
   static const _kAWSLambdaFunctionName = 'AWS_LAMBDA_FUNCTION_NAME';
   static const _kAWSLambdaFunctionVersion = 'AWS_LAMBDA_FUNCTION_VERSION';
   static const _kAWSLambdaLogGroupName = 'AWS_LAMBDA_LOG_GROUP_NAME';
@@ -34,7 +33,7 @@ class Context {
   }
 
   /// Handler that is used for the invocation of the function
-  String? handler;
+  String handler;
 
   /// Name of the function that is invoked.
   String? functionName;
@@ -68,18 +67,18 @@ class Context {
 
   /// Id of the request.
   /// You can use this to track the request for the invocation.
-  String? requestId;
+  String requestId;
 
   /// The ARN to identify the function.
   String? invokedFunctionArn;
 
   Context({
-    String? handler,
+    required this.requestId,
+    required this.handler,
     String? functionName,
     String? functionMemorySize,
     String? logGroupName,
     String? logStreamName,
-    required String requestId,
     String? invokedFunction,
     String? region,
     String? executionEnv,
@@ -87,9 +86,6 @@ class Context {
     String? secretAccessKey,
     String? sessionToken,
   }) {
-    assert(handler != null);
-
-    this.handler = handler ?? Platform.environment[_kAWSLambdaHandler];
     this.functionName =
         functionName ?? Platform.environment[_kAWSLambdaFunctionName];
     functionVersion =
@@ -100,7 +96,6 @@ class Context {
         logGroupName ?? Platform.environment[_kAWSLambdaLogGroupName];
     this.logStreamName =
         logStreamName ?? Platform.environment[_kAWSLambdaLogStreamName];
-    this.requestId = requestId;
     invokedFunctionArn = invokedFunction;
     this.region = region ?? Platform.environment[_kAWSLambdaRegion];
     this.executionEnv =
@@ -126,19 +121,19 @@ class Context {
     String? accessKey,
     String? secretAccessKey,
     String? sessionToken,
-  }) {
-    return Context(
-        handler: handler ?? this.handler!,
+  }) =>
+      Context(
+        requestId: requestId ?? this.requestId,
+        handler: handler ?? this.handler,
         functionName: functionName ?? this.functionName,
         functionMemorySize: functionMemorySize ?? this.functionMemorySize,
         logGroupName: logGroupName ?? this.logGroupName,
         logStreamName: logStreamName ?? this.logStreamName,
-        requestId: requestId ?? this.requestId!,
         invokedFunction: invokedFunction ?? invokedFunctionArn,
         region: region ?? this.region,
         executionEnv: executionEnv ?? this.executionEnv,
         accessKey: accessKey ?? this.accessKey,
         secretAccessKey: secretAccessKey ?? this.secretAccessKey,
-        sessionToken: sessionToken ?? this.sessionToken);
-  }
+        sessionToken: sessionToken ?? this.sessionToken,
+      );
 }

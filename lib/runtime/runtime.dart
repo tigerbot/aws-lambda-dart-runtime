@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
-
 import 'package:aws_lambda_runtime/client/client.dart';
 import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:aws_lambda_runtime/runtime/context.dart';

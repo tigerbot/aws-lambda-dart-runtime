@@ -54,13 +54,11 @@ class AwsApiGatewayResponse {
   /// But also it signals if the [body] is Base64 encoded and what the HTTP Status Code
   /// of the response is.
   AwsApiGatewayResponse({
-    String? body,
-    bool isBase64Encoded = false,
+    this.body,
+    this.isBase64Encoded = false,
     Map<String, String>? headers,
     int? statusCode,
   }) {
-    this.body = body;
-    this.isBase64Encoded = isBase64Encoded;
     this.headers = headers ?? {'Content-Type': 'application/json'};
     this.statusCode = statusCode ?? HttpStatus.ok;
   }
@@ -178,7 +176,7 @@ class AwsApiGatewayEventHeaders {
   @JsonKey(name: 'X-Amzn-Trace-Id')
   final String? xAmznTraceId;
 
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   late Map<String, dynamic> raw;
 
   factory AwsApiGatewayEventHeaders.fromJson(Map<String, dynamic> json) {

@@ -1,8 +1,11 @@
+import 'dart:async';
 import 'package:test/test.dart';
 
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 void main() {
+  Future testHandler(context, event) async => true;
+
   group('runtime', () {
     test('instance is created without error', () {
       expect(() => Runtime(), returnsNormally);
@@ -15,29 +18,23 @@ void main() {
     });
 
     test('successfully add a handler to runtime', () async {
+      const name = 'test.register';
       final runtime = Runtime();
 
-      final Handler testHandler = (context, event) async {
-        return true;
-      };
+      final addHandler = runtime.registerHandler(name, testHandler);
 
-      final addHandler = runtime.registerHandler('test.handler', testHandler);
-
-      expect(runtime.handlerExists('test.handler'), equals(true));
+      expect(runtime.handlerExists(name), equals(true));
       expect(addHandler, equals(testHandler));
     });
 
     test('successfully deregister a handler to runtime', () async {
+      const name = 'test.deregister';
       final runtime = Runtime();
 
-      final testHandler = (context, event) async {
-        return true;
-      };
+      runtime.registerHandler(name, testHandler);
+      final removedHandler = runtime.deregisterHandler(name);
 
-      runtime.registerHandler('test.handler', testHandler);
-      final removedHandler = runtime.deregisterHandler('test.handler');
-
-      expect(runtime.handlerExists('test.handler'), equals(false));
+      expect(runtime.handlerExists(name), equals(false));
       expect(removedHandler, equals(testHandler));
     });
   });

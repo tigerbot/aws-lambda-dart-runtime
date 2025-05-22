@@ -97,29 +97,18 @@ class Environment {
         runtimeAPI: runtimeAPI);
   }
 
-  const Environment.raw(
-      {required this.handler,
-      required this.functionName,
-      required this.functionMemorySize,
-      required this.functionVersion,
-      required this.logGroupName,
-      required this.logStreamName,
-      required this.region,
-      required this.executionEnv,
-      required this.accessKey,
-      required this.secretAccessKey,
-      required this.runtimeAPI,
-      required this.sessionToken})
-      : assert(handler != null),
-        assert(functionName != null),
-        assert(functionMemorySize != null),
-        assert(functionVersion != null),
-        assert(logGroupName != null),
-        assert(logStreamName != null),
-        assert(region != null),
-        assert(executionEnv != null),
-        assert(accessKey != null),
-        assert(secretAccessKey != null),
-        assert(sessionToken != null),
-        assert(runtimeAPI != null);
+  const Environment.raw({
+    required this.handler,
+    required this.functionName,
+    required this.functionMemorySize,
+    required this.functionVersion,
+    required this.logGroupName,
+    required this.logStreamName,
+    required this.region,
+    required this.executionEnv,
+    required this.accessKey,
+    required this.secretAccessKey,
+    required this.runtimeAPI,
+    required this.sessionToken,
+  });
 }

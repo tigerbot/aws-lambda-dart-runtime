@@ -100,17 +100,11 @@ class InvocationError {
 /// It is implemented as a singleton whereby [Client.instance]
 /// always returns the already instantiated client.
 class Client {
-  late http.Client _client;
-
   static final Client _singleton = Client._internal();
+  factory Client() => _singleton;
 
-  factory Client() {
-    return _singleton;
-  }
-
-  Client._internal() {
-    _client = http.Client();
-  }
+  final _client = http.Client();
+  Client._internal();
 
   static const runtimeApiVersion = '2018-06-01';
 
