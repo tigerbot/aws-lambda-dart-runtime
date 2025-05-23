@@ -1,139 +1,74 @@
-import 'dart:io' show Platform;
-
+import './environment.dart';
 import '../client/client.dart';
 
 /// Context contains the Lambda execution context information.
-/// They are either provided via [Platform.environment] or [NextInvocation]
-/// which is the result from the Lambda API.
-///
-/// Note: this should not be used directly.
 class Context {
-  /// These are the constants used to map [Platform.environment]
-  /// which are specific to the Lambda execution environment.
-  static const _kAWSLambdaFunctionName = 'AWS_LAMBDA_FUNCTION_NAME';
-  static const _kAWSLambdaFunctionVersion = 'AWS_LAMBDA_FUNCTION_VERSION';
-  static const _kAWSLambdaLogGroupName = 'AWS_LAMBDA_LOG_GROUP_NAME';
-  static const _kAWSLambdaLogStreamName = 'AWS_LAMBDA_LOG_STREAM_NAME';
-  static const _kAWSLambdaFunctionMemorySize =
-      'AWS_LAMBDA_FUNCTION_MEMORY_SIZE';
-  static const _kAWSLambdaRegion = 'AWS_REGION';
-  static const _kAWSLambdaExecutionEnv = 'AWS_EXECUTION_ENV';
-  static const _kAWSLambdaAccessKey = 'AWS_ACCESS_KEY_ID';
-  static const _kAWSLambdaSecretAccesKey = 'AWS_SECRET_ACCESS_KEY';
-  static const _kAWSLambdaSessionToken = 'AWS_SESSION_TOKEN';
-
-  /// Creates a new [Context] from [NextInvocation] which is the data
-  /// from the Lambda Runtime Interface for the next [Handler<T>] invocation.
-  static Context fromNextInvocation(NextInvocation nextInvocation) {
-    return Context(
-      handler: Client.handlerName!,
-      requestId: nextInvocation.requestId,
-      invokedFunction: nextInvocation.invokedFunctionArn,
-    );
-  }
-
-  /// Handler that is used for the invocation of the function
-  String handler;
-
-  /// Name of the function that is invoked.
-  String? functionName;
-
-  /// Version of the function that is invoked.
-  String? functionVersion;
-
-  /// Memory sized that is allocated to execution of the function.
-  String? functionMemorySize;
-
-  /// Cloudwatch LogGroup that is associated with the Lambda.
-  String? logGroupName;
-
-  /// Cloudwach LogStream that is associated with the Lambda.
-  String? logStreamName;
-
-  /// Region that this function exists in.
-  String? region;
-
-  /// The execution environment of the function.
-  String? executionEnv;
-
-  /// Access key that is acquired via STS.
-  String? accessKey;
-
-  /// Secret access key that is acquired via STS.
-  String? secretAccessKey;
-
-  /// The session token from STS.
-  String? sessionToken;
-
   /// Id of the request.
   /// You can use this to track the request for the invocation.
-  String requestId;
+  final String requestId;
 
   /// The ARN to identify the function.
-  String? invokedFunctionArn;
+  final String? invokedFunctionArn;
 
-  Context({
+  /// Handler that is used for the invocation of the function
+  final String handler;
+
+  /// Region that this function exists in.
+  final String? region;
+
+  /// Name of the function that is invoked.
+  final String? functionName;
+
+  /// Version of the function that is invoked.
+  final String? functionVersion;
+
+  /// Amount of memory available to the function in MB.
+  final String? functionMemorySize;
+
+  /// Names of the CloudWatch Logs group and stream for the function.
+  /// Not available in Lambda SnapStart functions.
+  final String? logGroupName, logStreamName;
+
+  /// Access keys obtained from the function's execution role.
+  final String? accessKeyId, accessKey, secretAccessKey, sessionToken;
+
+  const Context._internal({
     required this.requestId,
+    required this.invokedFunctionArn,
     required this.handler,
-    String? functionName,
-    String? functionMemorySize,
-    String? logGroupName,
-    String? logStreamName,
-    String? invokedFunction,
-    String? region,
-    String? executionEnv,
-    String? accessKey,
-    String? secretAccessKey,
-    String? sessionToken,
-  }) {
-    this.functionName =
-        functionName ?? Platform.environment[_kAWSLambdaFunctionName];
-    functionVersion =
-        functionVersion ?? Platform.environment[_kAWSLambdaFunctionVersion];
-    this.functionMemorySize = functionMemorySize ??
-        Platform.environment[_kAWSLambdaFunctionMemorySize];
-    this.logGroupName =
-        logGroupName ?? Platform.environment[_kAWSLambdaLogGroupName];
-    this.logStreamName =
-        logStreamName ?? Platform.environment[_kAWSLambdaLogStreamName];
-    invokedFunctionArn = invokedFunction;
-    this.region = region ?? Platform.environment[_kAWSLambdaRegion];
-    this.executionEnv =
-        executionEnv ?? Platform.environment[_kAWSLambdaExecutionEnv];
-    this.accessKey = accessKey ?? Platform.environment[_kAWSLambdaAccessKey];
-    this.secretAccessKey =
-        secretAccessKey ?? Platform.environment[_kAWSLambdaSecretAccesKey];
-    this.sessionToken =
-        sessionToken ?? Platform.environment[_kAWSLambdaSessionToken];
-  }
+    required this.functionName,
+    required this.functionVersion,
+    required this.functionMemorySize,
+    required this.logGroupName,
+    required this.logStreamName,
+    required this.region,
+    required this.accessKeyId,
+    required this.accessKey,
+    required this.secretAccessKey,
+    required this.sessionToken,
+  });
 
-  /// Allows to copy a created [Context] over with some new settings.
-  Context copyWith({
-    String? handler,
-    String? functionName,
-    String? functionMemorySize,
-    String? logGroupName,
-    String? logStreamName,
-    String? requestId,
-    String? invokedFunction,
-    String? region,
-    String? executionEnv,
-    String? accessKey,
-    String? secretAccessKey,
-    String? sessionToken,
-  }) =>
-      Context(
-        requestId: requestId ?? this.requestId,
-        handler: handler ?? this.handler,
-        functionName: functionName ?? this.functionName,
-        functionMemorySize: functionMemorySize ?? this.functionMemorySize,
-        logGroupName: logGroupName ?? this.logGroupName,
-        logStreamName: logStreamName ?? this.logStreamName,
-        invokedFunction: invokedFunction ?? invokedFunctionArn,
-        region: region ?? this.region,
-        executionEnv: executionEnv ?? this.executionEnv,
-        accessKey: accessKey ?? this.accessKey,
-        secretAccessKey: secretAccessKey ?? this.secretAccessKey,
-        sessionToken: sessionToken ?? this.sessionToken,
-      );
+  /// Creates a new [Context] for the next [Handler<T>] invocation from a
+  /// [NextInvocation] from the Lambda Runtime API and the [Environment]
+  /// for the current runtime.
+  ///
+  /// Note: This should not be created directly.
+  factory Context.fromNextInvocation(
+      NextInvocation invocation, Environment env) {
+    return Context._internal(
+      requestId: invocation.requestId,
+      invokedFunctionArn: invocation.invokedFunctionArn,
+      handler: env.handler,
+      functionName: env.funcName,
+      functionVersion: env.funcVersion,
+      functionMemorySize: env.funcMemSize,
+      logGroupName: env.logGroupName,
+      logStreamName: env.logStreamName,
+      region: env.region,
+      accessKeyId: env.accessKeyId,
+      accessKey: env.accessKey,
+      secretAccessKey: env.secretAccessKey,
+      sessionToken: env.sessionToken,
+    );
+  }
 }

@@ -1,6 +1,8 @@
 import 'dart:async';
+import 'package:meta/meta.dart' show visibleForTesting;
 
 import 'package:aws_lambda_runtime/client/client.dart';
+import 'package:aws_lambda_runtime/runtime/environment.dart';
 import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:aws_lambda_runtime/runtime/context.dart';
 import 'package:aws_lambda_runtime/runtime/exception.dart';
@@ -19,7 +21,7 @@ class _RuntimeHandler {
 
 /// A Runtime manages the interface to the Lambda API.
 ///
-/// The Runtime is designed as singleton and [Runtime.instance]
+/// The Runtime is designed as singleton and `Runtime()`
 /// returns the same instance of the [Runtime] everytime.
 ///
 /// ```dart
@@ -28,25 +30,20 @@ class _RuntimeHandler {
 ///    return new InvocationResult(context.requestId, "HELLO WORLD");
 /// };
 ///
-/// await Runtime.instance
+/// final rt = Runtime()
 ///   ..registerHandler<AwsS3NotificationEvent>("hello.world", helloWorld)
-///   ..invoke();
+/// await rt.invoke();
 /// ```
-///
-/// Note: You can register an
 class Runtime {
-  late Client _client;
+  static final Runtime _singleton = Runtime.fromEnv(Environment());
+  factory Runtime() => _singleton;
 
-  static final Runtime _singleton = Runtime._internal();
   final Map<String, _RuntimeHandler> _handlers = {};
+  final Client _client;
+  final Environment _env;
 
-  factory Runtime() {
-    return _singleton;
-  }
-
-  Runtime._internal() {
-    _client = Client();
-  }
+  @visibleForTesting
+  Runtime.fromEnv(this._env) : _client = Client(runtimeApi: _env.runtimeAPI);
 
   /// Lists the registered handlers by name.
   /// The name is a simple [String] which reflects
@@ -86,16 +83,16 @@ class Runtime {
   /// sends the [InvocationResult] via [_client.postInvocationResponse(result)] to the API.
   /// If there is an error during the execution. The exception gets caught
   /// and the error is posted via [_client.postInvocationError(err)] to the API.
-  void invoke() async {
+  Future<void> invoke() async {
     while (true) {
-      await _handleInvocation(await _client.getNextInvocation());
+      await _client.getNextInvocation().then(_handleInvocation);
     }
   }
 
   Future<void> _handleInvocation(NextInvocation nextInvocation) async {
     try {
       // creating the new context
-      final context = Context.fromNextInvocation(nextInvocation);
+      final context = Context.fromNextInvocation(nextInvocation, _env);
 
       final func = _handlers[context.handler];
       if (func == null) {

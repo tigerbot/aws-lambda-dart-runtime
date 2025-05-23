@@ -9,3 +9,13 @@ class RuntimeException implements Exception {
   @override
   String toString() => 'RuntimeException: $cause';
 }
+
+/// An exception thrown when a required OS environment value is missing.
+class MissingEnvException implements Exception {
+  const MissingEnvException(this.environmentKey);
+
+  final String environmentKey;
+
+  @override
+  String toString() => "Missing OS enviroment value for $environmentKey";
+}

@@ -96,52 +96,46 @@ class InvocationError {
   const InvocationError(this.error, this.stackTrace);
 }
 
-/// Client is the Lambda Runtime Interface client.
-/// It is implemented as a singleton whereby [Client.instance]
-/// always returns the already instantiated client.
+/// Client is the Lambda Runtime API client.
+/// See https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html
+///
+/// Note: This should not be used directly.
 class Client {
-  static final Client _singleton = Client._internal();
-  factory Client() => _singleton;
-
-  final _client = http.Client();
-  Client._internal();
-
   static const runtimeApiVersion = '2018-06-01';
+  final String runtimeApi;
+  final String _uriBase;
+  final _client = http.Client();
 
-  static String? get runtimeApi =>
-      Platform.environment['AWS_LAMBDA_RUNTIME_API'];
+  Client({required this.runtimeApi})
+      : _uriBase = 'http://$runtimeApi/$runtimeApiVersion/runtime';
 
-  static String? get handlerName => Platform.environment['_HANDLER'];
-
-  /// Get the next invocation from the AWS Lambda Runtime Interface (see https://docs.aws.amazon.com/lambda/latest/dg/runtimes-api.html).
-  Future<NextInvocation> getNextInvocation() async {
-    final response = await _client.get(Uri.parse(
-        'http://$runtimeApi/$runtimeApiVersion/runtime/invocation/next'));
-    return NextInvocation.fromResponse(response);
+  /// Get the next invocation from the AWS Lambda Runtime API.
+  Future<NextInvocation> getNextInvocation() {
+    return _client
+        .get(Uri.parse('$_uriBase/invocation/next'))
+        .then(NextInvocation.fromResponse);
   }
 
   /// Post the invocation response to the AWS Lambda Runtime Interface.
-  Future<http.Response> postInvocationResponse(
-      String? requestId, dynamic payload) async {
-    return await _client.post(
-      Uri.parse(
-        'http://$runtimeApi/$runtimeApiVersion/runtime/invocation/$requestId/response',
-      ),
-      body: jsonEncode(payload),
-    );
-  }
+  Future<void> postInvocationResponse(String requestId, dynamic payload) =>
+      _sendResult('invocation/$requestId/response', payload);
 
   /// Post an invocation error to the AWS Lambda Runtime Interface.
   /// It takes in an [InvocationError] and the [requestId]. The [requestId]
   /// is used to map the error to the execution.
-  Future<http.Response> postInvocationError(
-      String requestId, InvocationError err) async {
-    return await _client.post(
-      Uri.parse(
-        'http://$runtimeApi/$runtimeApiVersion/runtime/invocation/$requestId/error',
-      ),
-      body: jsonEncode(err),
+  Future<void> postInvocationError(String requestId, InvocationError err) =>
+      _sendResult('invocation/$requestId/error', err);
+
+  Future<void> _sendResult(String path, dynamic payload) async {
+    final response = await _client.post(
+      Uri.parse('$_uriBase/$path'),
       headers: {'Content-type': 'application/json'},
+      body: jsonEncode(payload),
     );
+
+    // "Container error. Non-recoverable state. Runtime should exit promptly."
+    if (response.statusCode == 500) {
+      exit(1);
+    }
   }
 }
