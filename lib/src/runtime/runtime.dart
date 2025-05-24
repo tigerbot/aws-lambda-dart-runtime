@@ -97,16 +97,20 @@ class Runtime {
 
       final func = _handlers[context.handler];
       if (func == null) {
-        throw RuntimeException(
-            'No handler with name "${context.handler}" registered in runtime!');
+        throw InvocationError(
+          type: 'Runtime.NoSuchHandler',
+          message: 'No handler named "${context.handler}" registered!',
+        );
       }
       final event = Event.fromHandler(func.type, invocation.response);
       final result = await func.handler(context, event);
 
       await _client.postInvocationResponse(invocation.requestId, result);
-    } catch (error, stacktrace) {
+    } on InvocationError catch (error) {
+      await _client.postInvocationError(invocation.requestId, error);
+    } catch (error) {
       await _client.postInvocationError(
-          invocation.requestId, InvocationError(error, stacktrace));
+          invocation.requestId, InvocationError(message: error.toString()));
     }
   }
 }

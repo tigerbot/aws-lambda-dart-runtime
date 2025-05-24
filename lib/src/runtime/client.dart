@@ -4,6 +4,7 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
+import './exception.dart';
 import './invocation.dart';
 
 /// Client is the Lambda Runtime API client.

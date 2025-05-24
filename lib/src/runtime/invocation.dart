@@ -59,24 +59,3 @@ class Invocation {
     required this.response,
   });
 }
-
-/// Invocation error occurs when there has been an
-/// error in the invocation of a handlers. It wraps the
-/// inner [error] and formats it for the Lambda Runtime API.
-class InvocationError {
-  /// The error that catched during the invocation and
-  /// which is posted to the Lambda Runtime Interface.
-  final dynamic error;
-
-  /// StackTrace ...
-  final StackTrace stackTrace;
-
-  /// Extracts the [InvocationError] data into a JSON
-  /// representation for the Runtime Interface.
-  Map<String, dynamic> toJson() => {
-        'errorMessage': error.toString(),
-        'errorType': 'InvocationError',
-      };
-
-  const InvocationError(this.error, this.stackTrace);
-}
