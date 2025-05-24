@@ -1,6 +1,6 @@
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 's3_event.g.dart';
 
 /// Representing a recorded S3 Event send to the Lambda.

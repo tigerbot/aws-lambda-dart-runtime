@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
 
-import 'package:aws_lambda_runtime/client/client.dart';
+import 'package:aws_lambda_runtime/src/runtime/invocation.dart';
 
 void main() {
   group('invocation', () {

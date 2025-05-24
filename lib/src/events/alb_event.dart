@@ -1,8 +1,7 @@
 import 'dart:io';
-
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 'alb_event.g.dart';
 
 /// Event send by an Application Load Balancer to the

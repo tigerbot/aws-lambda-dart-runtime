@@ -47,7 +47,7 @@ abstract class Event {
   /// Deregisters an event.
   static void deregisterEvent<E extends Event>() => Event._registry.remove(E);
 
-  /// Creates a new event from a handler type with the [NextInvocation.response].
+  /// Creates a new event for a handler from the invocation data.
   static dynamic fromHandler(Type type, Map<String, dynamic> json) =>
       _registry[type]!(json);
 }

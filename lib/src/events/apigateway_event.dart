@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
-
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 'apigateway_event.g.dart';
 
 /// API Gateway Response contains the data for a response

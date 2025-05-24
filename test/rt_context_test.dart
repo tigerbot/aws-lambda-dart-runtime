@@ -1,14 +1,19 @@
 import 'package:test/test.dart';
 
-import 'package:aws_lambda_runtime/runtime/context.dart';
-import 'package:aws_lambda_runtime/runtime/environment.dart';
-import 'package:aws_lambda_runtime/client/client.dart';
+import 'package:aws_lambda_runtime/src/runtime/context.dart';
+import 'package:aws_lambda_runtime/src/runtime/environment.dart';
+import 'package:aws_lambda_runtime/src/runtime/invocation.dart';
 
 void main() {
   group('context', () {
     test('Context gets initialized from an Invocation', () async {
-      final invocation = NextInvocation(
+      final invocation = Invocation(
         requestId: 'req1234',
+        deadlineMs: '9876543210',
+        invokedFunctionArn: 'not-a-real-arn',
+        traceId: 'x-rays are cool',
+        clientContext: 'foobar',
+        cognitoIdentity: 'me, myself, and I',
         response: {},
       );
 
@@ -27,7 +32,15 @@ void main() {
         logStreamName: 'foo-stream',
       );
 
-      final ctx = Context.fromNextInvocation(invocation, env);
+      final ctx = Context.fromInvocation(invocation, env);
+
+      expect(ctx.requestId, invocation.requestId);
+      expect(ctx.deadlineMs, invocation.deadlineMs);
+      expect(ctx.invokedFunctionArn, invocation.invokedFunctionArn);
+      expect(ctx.traceId, invocation.traceId);
+      expect(ctx.clientContext, invocation.clientContext);
+      expect(ctx.cognitoIdentity, invocation.cognitoIdentity);
+
       expect(ctx.handler, env.handler);
       expect(ctx.functionName, env.funcName);
       expect(ctx.functionVersion, env.funcVersion);

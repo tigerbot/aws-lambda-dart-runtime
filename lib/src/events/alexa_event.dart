@@ -1,6 +1,6 @@
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 'alexa_event.g.dart';
 
 /// Header are meta information about the event.

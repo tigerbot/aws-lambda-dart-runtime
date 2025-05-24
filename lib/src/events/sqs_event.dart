@@ -1,6 +1,6 @@
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 'sqs_event.g.dart';
 
 /// SQS Event Record that is send via [AwsSQSEvent].

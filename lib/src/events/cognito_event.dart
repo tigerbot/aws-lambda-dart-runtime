@@ -1,6 +1,6 @@
-import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import '../runtime/event.dart';
 part 'cognito_event.g.dart';
 
 @JsonSerializable()

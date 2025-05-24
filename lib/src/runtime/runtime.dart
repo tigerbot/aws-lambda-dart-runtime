@@ -1,11 +1,12 @@
 import 'dart:async';
 import 'package:meta/meta.dart' show visibleForTesting;
 
-import 'package:aws_lambda_runtime/client/client.dart';
-import 'package:aws_lambda_runtime/runtime/environment.dart';
-import 'package:aws_lambda_runtime/runtime/event.dart';
-import 'package:aws_lambda_runtime/runtime/context.dart';
-import 'package:aws_lambda_runtime/runtime/exception.dart';
+import './client.dart';
+import './context.dart';
+import './environment.dart';
+import './event.dart';
+import './exception.dart';
+import './invocation.dart';
 
 /// A function which ingests and Event and a [Context] and returns
 /// a result to be encoded by the [Runtime] and posted to the Lambda API.
@@ -89,23 +90,23 @@ class Runtime {
     }
   }
 
-  Future<void> _handleInvocation(NextInvocation nextInvocation) async {
+  Future<void> _handleInvocation(Invocation invocation) async {
     try {
       // creating the new context
-      final context = Context.fromNextInvocation(nextInvocation, _env);
+      final context = Context.fromInvocation(invocation, _env);
 
       final func = _handlers[context.handler];
       if (func == null) {
         throw RuntimeException(
             'No handler with name "${context.handler}" registered in runtime!');
       }
-      final event = Event.fromHandler(func.type, nextInvocation.response);
+      final event = Event.fromHandler(func.type, invocation.response);
       final result = await func.handler(context, event);
 
-      await _client.postInvocationResponse(context.requestId, result);
+      await _client.postInvocationResponse(invocation.requestId, result);
     } catch (error, stacktrace) {
       await _client.postInvocationError(
-          nextInvocation.requestId, InvocationError(error, stacktrace));
+          invocation.requestId, InvocationError(error, stacktrace));
     }
   }
 }
