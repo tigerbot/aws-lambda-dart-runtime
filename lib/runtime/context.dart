@@ -48,7 +48,7 @@ class Context {
     required this.sessionToken,
   });
 
-  /// Creates a new [Context] for the next [Handler<T>] invocation from a
+  /// Creates a new [Context] for the next [Handler<E>] invocation from a
   /// [NextInvocation] from the Lambda Runtime API and the [Environment]
   /// for the current runtime.
   ///

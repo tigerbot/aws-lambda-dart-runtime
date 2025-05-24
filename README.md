@@ -10,9 +10,9 @@
 ---
 
 > Read [Introducing a Dart runtime for AWS Lambda](https://aws.amazon.com/de/blogs/opensource/introducing-a-dart-runtime-for-aws-lambda/)
-
+>
 > 🚀 [Experimental support](#-serverless-framework-experimental) for ⚡️ serverless framework
-
+>
 > If you need to access AWS APIs in your Lambda function, [please search on pub.dev](https://pub.dev/packages?q=dependency%3Ashared_aws_api&sort=popularity) for packages provided by [Agilord](https://www.agilord.com/)
 
 ## Features
@@ -23,8 +23,8 @@
 - Typed events
 - Custom events
 
-> this package requires Dart `>= 2.6`
-> currently `dart2native` only supports building for the platform it is run on, so you must either build on a `Linux` machine or use `docker`
+> this package requires Dart `>= 3.0`
+> currently `dart compile exe` only supports building for the platform it is run on, so you must either build on a `Linux` machine or use `docker`.
 
 ## 🚀 Introduction
 
@@ -32,7 +32,7 @@
 
 There are two ways in which you could use [Dart](https://dart.dev/). You could bundle the Dart Runtime in a [Lambda layer](https://docs.aws.amazon.com/lambda/latest/dg/configuration-layers.html) and use JIT compilation within the lambda execution to run a Dart program. The other is to compile a shippable binary of the Dart program.
 
-Dart `>= 2.6` introduced `dart2native`. The [tool](https://dart.dev/tools/dart2native) uses AOT (ahead-of-time) to compile a Dart program to [native x64 machine code](https://dart.dev/platforms). This standalone executable is native machine code that's compiled from the specific Dart file and its dependencies, plus a small Dart runtime that handles type checking and garbage collection.
+Dart `>= 3.0` introduced `dart compile exe`. The [tool](https://dart.dev/tools/dart-compile) uses AOT (ahead-of-time) to compile a Dart program to [native x64 or arm machine code](https://dart.dev/platforms). This standalone executable is native machine code that's compiled from the specific Dart file and its dependencies, plus a small Dart runtime that handles type checking and garbage collection.
 
 We decided to use the latter approach rather then the just-in-time compilation of Dart files. The main reason for this decision is that we wanted to avoid having to ship and maintain a standalone Dart runtime version. We would eventually have to deprecate versions, or always update the version when moving forward. Furthermore, shipping a binary has the advantage of having an always runnable version of your function in addition to performance benefits.
 
@@ -42,20 +42,18 @@ We want to highlight [Firecracker open-source innovation](https://www.youtube.co
 
 Add the following snippet to your [pubspec file](https://dart.dev/tools/pub/pubspec) in `pubspec.yaml`.
 
-```yaml
-dependencies:
-  aws_lambda_runtime: ^1.1.0
+```shell
+dart pub add aws_lambda_runtime
 ```
 
-[Docs](https://awslabs.github.io/aws-lambda-dart-runtime/) are available. They are also accessible in the [`docs`](https://github.com/awslabs/aws-lambda-dart-runtime/blob/docs) folder.
+[API Docs](https://pub.dev/documentation/aws_lambda_runtime/latest/) are available. They can also be regenerated and viewed locally.
 
-```bash
+```shell
+dart doc
 # access the docs local
-pub global activate dhttpd
-dhttpd --path docs
+dart pub global activate dhttpd
+dhttpd --path doc/api
 ```
-
-> you can generate the docs with `dartdoc --output docs`
 
 Build and deploy the Dart functions by the [serverless](https://serverless.com) framework or by custom deployment.
 
@@ -65,7 +63,7 @@ Checkout [serverless-dart](https://github.com/katallaxie/serverless-dart) to cre
 
 You can start your next project using the [serverless-aws-dart](https://github.com/katallaxie/serverless-aws-dart) template.
 
-```bash
+```shell
 $ npx serverless install \
   --url https://github.com/katallaxie/serverless-aws-dart \
   --name hello
@@ -76,7 +74,7 @@ Every [serverless workflow command](https://www.serverless.com/framework/docs/pr
 
 ### Custom deployment
 
-The deployment is a manual task right now. We have a [`example/build.sh`](https://github.com/awslabs/aws-lambda-dart-runtime/blob/master/example/build.sh) script which makes the process a bit easier. There are three steps to get your code ready to be shipped.
+The deployment is a manual task right now. We have a [`example/build.sh`](./example/build.sh) script which makes the process a bit easier. There are three steps to get your code ready to be shipped.
 
 1. Compile your Dart program with `dart2native main.dart -o bootstrap`
 2. Create a `.zip` file with `zip lambda.zip bootstrap`
@@ -86,7 +84,7 @@ The deployment is a manual task right now. We have a [`example/build.sh`](https:
 
 When you created your function and upload it via the the console. Please, replace `arn:aws:iam::xxx:xxx` with the role you created for your lambda.
 
-```bash
+```shell
 aws lambda create-function --function-name dartTest \
   --handler hello.apigateway \
   --zip-file fileb://./lambda.zip \
@@ -98,9 +96,8 @@ aws lambda create-function --function-name dartTest \
 
 Updating a function is a fairly easy task. Rebuild your `lambda.zip` package and execute the following command.
 
-```bash
+```shell
 aws lambda update-function-code --function-name dartTest --zip-file fileb://./lambda.zip
-
 ```
 
 ## Events
@@ -123,47 +120,42 @@ You can also register custom events.
 ```dart
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
-class MyCustomEvent {
+class MyCustomEvent extends Event {
+  final Map<String, dynamic> rawJson;
+  const MyCustomEvent(this.rawJson);
+
   factory MyCustomEvent.fromJson(Map<String, dynamic> json) =>
       MyCustomEvent(json);
-
-  const MyCustomEvent();
 }
 
-void main() async {
-  final Handler<MyCustomEvent> successHandler =
-      (context, event) async {
-    return InvocationResult(context.requestId, "SUCCESS");
-  };
+String successHandler(Context ctx, MyCustomEvent event) => "SUCCESS";
 
-  Runtime()
-    ..registerEvent<MyCustomEvent>((Map<String, dynamic> json) => MyCustomEvent.from(json))
-    ..registerHandler<MyCustomEvent>("doesnt.matter", successHandler)
-    ..invoke();
+void main() async {
+  final rt = Runtime()
+    ..registerEvent(MyCustomEvent.fromJson)
+    ..registerHandler("doesnt.matter", successHandler);
+  await rt.invoke();
 }
 ```
 
 ## Example
 
-The example in [`main.dart`](https://github.com/awslabs/aws-lambda-dart-runtime/blob/master/example/lib/main.dart) show how the package is intended to be used. Because `dart2native` does not support cross-platform compilation, you can use the [`google/dart`](https://hub.docker.com/r/google/dart/) (:warning: if you are on `Linux` you can ignore this) container to build the project. The `build.sh` script automates the build process in the container.
+The example in [`main.dart`](./example/lib/main.dart) show how the package is intended to be used.
 
+```shell
+dart compile exe example/lib/main.dart -o bootstrap
 ```
-  # will build the binary in the container
-  cd example; docker run -v $PWD:/app --entrypoint app/build.sh google/dart && zip lambda.zip bootstrap && rm bootstrap
+
+:warning: Because `dart compile` does not support cross-platform compilation, if your are not on `Linux` you will need to use the [dart Docker image](https://hub.docker.com/_/dart) container to build the project. The `build.sh` script automates the build process in the container.
+
+```shell
+# will build the binary in the container
+# mount the entire repo because example uses a relative package in pubspec.yaml
+docker run --rm -v ${PWD}:/app --platform linux/arm64 dart /app/example/build.sh
 ```
 
-You will see the `lambda.zip` which you can upload manually, or use the client of your choice.
-
-What you see in the example is an example of the interface to the Dart Runtime that we created.
-
-You will have to make `aws_lambda_runtime` a dependency of your project.
-
-```
-...
-dependencies:
-  aws_lambda_runtime:
-...
-```
+This will create a `bootstrap` binary that you can then add to a zip file and
+upload either manually or with the client of your choice.
 
 We support using multiple handlers in one executable. The following example shows to register one handler.
 
@@ -171,33 +163,32 @@ We support using multiple handlers in one executable. The following example show
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 void main() async {
-  /// This demo's handling an API Gateway request.
-  final Handler<AwsApiGatewayEvent> helloApiGateway = (context, event) async {
-    final response = {"message": "hello ${context.requestId}"};
-
-    /// it returns an encoded response to the gateway
-    return InvocationResult(
-        context.requestId, AwsApiGatewayResponse.fromJson(response));
-  };
-
   /// The Runtime is a singleton. You can define the handlers as you wish.
-  Runtime()
-    ..registerHandler<AwsApiGatewayEvent>("hello.apigateway", helloApiGateway)
-    ..invoke();
+  final rt = Runtime()
+    ..registerHandler("hello.apigateway", helloApiGateway);
+  await rt.invoke();
 }
+
+/// This demo's handling an API Gateway request.
+AwsApiGatewayResponse helloApiGateway(Context context, AwsApiGatewayEvent event) {
+  final response = {"message": "hello ${context.requestId}"};
+
+  /// it returns an encoded response to the gateway
+  return AwsApiGatewayResponse.fromJson(response);
+};
 ```
 
-This example registers the `hello.apigateway` handler with the function to execute for this handler. The handler function is typed to receive a [Amazon API Gateway Event](https://aws.amazon.com/api-gateway) and it returns a response to the invoking gateway. We support many other [events](#events). Handler functions get a `Context` injected with the needed information about the invocation. You can also register your own custom events via `Runtime.registerEvent<T>(Handler<T>)` (see [events](#events)).
+This example registers the `hello.apigateway` handler with the function to execute for this handler. The handler function is typed to receive a [Amazon API Gateway Event](https://aws.amazon.com/api-gateway) and it returns a response to the invoking gateway. We support many other [events](#events). Handler functions get a `Context` injected with the needed information about the invocation. You can also register your own custom events via `Runtime.registerEvent<E>(Handler<E>)` (see [events](#events)).
 
 ## Limitations
 
 - No Just-in-time (JIT) support
-- Requires Dart `>= 2.6`
+- Requires Dart `>= 3.0`
 - No cross-platform compile support (see [#28617](https://github.com/dart-lang/sdk/issues/28617)).
 
 ## Development
 
-If you want to use the [Repository](https://github.com/awslabs/aws-lambda-dart-runtime.git) directly you can clone it and overwrite the dependency in your `pubspec.yaml` as follows.
+If you want to use the Repository directly you can clone it and overwrite the dependency in your `pubspec.yaml` as follows.
 
 ```yaml
 dependency_overrides:
@@ -205,11 +196,11 @@ dependency_overrides:
     path: <path_to_source>
 ```
 
-The [`data`](https://github.com/aws-lambda-dart-runtime/data) folder contains examples of the used events. We use this to run our tests, but you can also use them to implement new features. If you want to request the processing of a new event, you may provide a payload here.
+The [`data`](./data) folder contains examples of the used events. We use this to run our tests, but you can also use them to implement new features. If you want to request the processing of a new event, you may provide a payload here.
 
-```bash
+```shell
 # run the tests
-pub run test
+dart test
 ```
 
 ## License

@@ -1,17 +1,18 @@
 #!/bin/sh
+set -eu
 
-# setting cacke folder
-export PUB_CACHE=/tmp
+# setting cache folder
+export PUB_CACHE=/tmp/dart-cache
 
 # creating a temporary directory for the build
-cd $(mktemp -d)
-
-# pub the app
-cp -Rp /app/* .
+BUILD_DIR=/tmp/aws-lambda-dart-runtime
+mkdir -p $BUILD_DIR
+cp -Rp /app/* $BUILD_DIR
+cd $BUILD_DIR/example
 ls -l
 # setup deps
-/usr/lib/dart/bin/pub get
+dart pub get
 # build the binary
-/usr/lib/dart/bin/dart2native lib/main.dart -o bootstrap
+dart compile exe lib/main.dart -o bootstrap
 # move this back to app
 mv bootstrap /app/bootstrap

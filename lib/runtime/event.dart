@@ -10,53 +10,44 @@ import '../events/s3_event.dart';
 import '../events/sqs_event.dart';
 import '../events/kinesis_data_stream_event.dart';
 
+typedef EventParser<E extends Event> = E Function(Map<String, dynamic>);
+
 /// Event is the abstraction for every event that
 /// can be ingested by a handler.
-///
-/// Note is currently not supported to register your
-/// own events here.
 abstract class Event {
   const Event();
   static final Map<Type, Function(Map<String, dynamic>)> _registry = {
-    AwsCognitoEvent: (Map<String, dynamic>? json) =>
-        AwsCognitoEvent.fromJson(json!),
-    AwsS3Event: (Map<String, dynamic>? json) => AwsS3Event.fromJson(json!),
-    AwsApiGatewayEvent: (Map<String, dynamic>? json) =>
-        AwsApiGatewayEvent.fromJson(json!),
-    AwsAppSyncEvent: (Map<String, dynamic>? json) =>
-        AwsAppSyncEvent.fromJson(json!),
-    AwsALBEvent: (Map<String, dynamic>? json) => AwsALBEvent.fromJson(json!),
-    AwsAlexaEvent: (Map<String, dynamic>? json) =>
-        AwsAlexaEvent.fromJson(json!),
-    AwsSQSEvent: (Map<String, dynamic>? json) => AwsSQSEvent.fromJson(json!),
-    AwsCloudwatchEvent: (Map<String, dynamic>? json) =>
-        AwsCloudwatchEvent.fromJson(json!),
-    AwsCloudwatchLogEvent: (Map<String, dynamic>? json) =>
-        AwsCloudwatchLogEvent.fromJson(json!),
-    AwsDynamoDBUpdateEvent: (Map<String, dynamic>? json) =>
-        AwsDynamoDBUpdateEvent.fromJson(json!),
-    AwsKinesisDataStreamEvent: (Map<String, dynamic>? json) =>
-        AwsKinesisDataStreamEvent.fromJson(json!)
+    AwsCognitoEvent: AwsCognitoEvent.fromJson,
+    AwsS3Event: AwsS3Event.fromJson,
+    AwsApiGatewayEvent: AwsApiGatewayEvent.fromJson,
+    AwsAppSyncEvent: AwsAppSyncEvent.fromJson,
+    AwsALBEvent: AwsALBEvent.fromJson,
+    AwsAlexaEvent: AwsAlexaEvent.fromJson,
+    AwsSQSEvent: AwsSQSEvent.fromJson,
+    AwsCloudwatchEvent: AwsCloudwatchEvent.fromJson,
+    AwsCloudwatchLogEvent: AwsCloudwatchLogEvent.fromJson,
+    AwsDynamoDBUpdateEvent: AwsDynamoDBUpdateEvent.fromJson,
+    AwsKinesisDataStreamEvent: AwsKinesisDataStreamEvent.fromJson,
   };
 
   /// Checks if a type of event is already registered.
-  static bool exists<T>() {
-    return Event._registry.containsKey(T);
+  static bool exists<E extends Event>() {
+    return Event._registry.containsKey(E);
   }
 
-  /// Returs the value of a registered event. It is [null]
+  /// Returs the parser of a registered event. It is `null`
   /// if no such event has been registered.
-  static T Function(Map<String, dynamic>)? value<T extends Event>() =>
-      Event._registry[T] as T Function(Map<String, dynamic>)?;
+  static EventParser<E>? parser<E extends Event>() =>
+      Event._registry[E] as EventParser<E>?;
 
   /// Registers an event.
-  static void registerEvent<T>(T Function(Map<String, dynamic>) func) =>
-      Event._registry[T] = func;
+  static void registerEvent<E extends Event>(EventParser<E> func) =>
+      Event._registry[E] = func;
 
   /// Deregisters an event.
-  static void deregisterEvent<T>() => Event._registry.remove(T);
+  static void deregisterEvent<E extends Event>() => Event._registry.remove(E);
 
   /// Creates a new event from a handler type with the [NextInvocation.response].
-  static dynamic fromHandler<T>(Type type, Map<String, dynamic> json) =>
+  static dynamic fromHandler(Type type, Map<String, dynamic> json) =>
       _registry[type]!(json);
 }

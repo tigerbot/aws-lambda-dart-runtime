@@ -5,33 +5,22 @@ import 'package:test/test.dart';
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
 
 void main() {
-  Future testHandler(context, event) async => true;
-
   group('runtime', () {
     final env = Environment(
       runtimeAPI: 'localhost:8888',
       handler: 'hello.World',
     );
+    final runtime = Runtime.fromEnv(env);
 
-    test('successfully add a handler to runtime', () async {
+    test('successfully (de)registers handlers', () {
       const name = 'test.register';
-      final runtime = Runtime.fromEnv(env);
-
-      final addHandler = runtime.registerHandler(name, testHandler);
-
-      expect(runtime.handlerExists(name), equals(true));
-      expect(addHandler, equals(testHandler));
-    });
-
-    test('successfully deregister a handler to runtime', () async {
-      const name = 'test.deregister';
-      final runtime = Runtime.fromEnv(env);
+      Future testHandler(Context ctx, AwsAlexaEvent ev) async => true;
 
       runtime.registerHandler(name, testHandler);
-      final removedHandler = runtime.deregisterHandler(name);
+      expect(runtime.handlerExists(name), equals(true));
 
+      runtime.deregisterHandler(name);
       expect(runtime.handlerExists(name), equals(false));
-      expect(removedHandler, equals(testHandler));
     });
   });
 }

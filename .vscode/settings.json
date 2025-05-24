@@ -1,6 +1,15 @@
 {
     "editor.formatOnSave": true,
     "search.exclude": {
+        "**/*.g.dart": true,
         "**/docs": true
+    },
+    "[markdown]": {
+        "editor.wordWrap": "wordWrapColumn",
+        "editor.wordWrapColumn": 80,
+        "editor.wrappingIndent": "indent"
+    },
+    "markdownlint.config": {
+        "no-inline-html": false
     }
 }

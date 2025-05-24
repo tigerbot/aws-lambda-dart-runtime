@@ -40,7 +40,7 @@ class AwsKinesisDataStream extends Event {
       this.approximateArrivalTimestamp});
 }
 
-/// Kinesis record that is send via [AwsKinesisEvent].
+/// Kinesis record that is send via [AwsKinesisDataStreamEvent].
 @JsonSerializable()
 class AwsKinesisDataStreamRecord {
   /// Data ...

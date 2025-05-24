@@ -59,25 +59,9 @@ class NextInvocation {
   });
 }
 
-/// Invocation result is the result that the invoked handler
-/// returns and is posted to the Lambda Runtime Interface.
-class InvocationResult {
-  /// The Id of the request in the Lambda Runtime Interface.
-  /// This is used to associate the result of the handler with
-  /// the triggered execution in the Runtime.
-  final String requestId;
-
-  /// The result of the handler execution. This can contain
-  /// any json-encodable data type.
-  final dynamic body;
-
-  const InvocationResult(this.requestId, this.body) : assert(body != null);
-}
-
 /// Invocation error occurs when there has been an
-/// error in the invocation of a handlers. It dynamically
-/// wraps the inner [error] and attaches the [requestId] to
-/// track it along the event.
+/// error in the invocation of a handlers. It wraps the
+/// inner [error] and formats it for the Lambda Runtime API.
 class InvocationError {
   /// The error that catched during the invocation and
   /// which is posted to the Lambda Runtime Interface.

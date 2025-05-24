@@ -7,10 +7,9 @@ import 'package:aws_lambda_runtime/runtime/event.dart';
 import 'package:aws_lambda_runtime/runtime/context.dart';
 import 'package:aws_lambda_runtime/runtime/exception.dart';
 
-/// A function which ingests and Event and a [Context]
-/// and returns a [InvocationResult]. The result is ecoded
-/// by the [Runtime] and posted to the Lambda API.
-typedef Handler<E> = Future Function(Context context, E event);
+/// A function which ingests and Event and a [Context] and returns
+/// a result to be encoded by the [Runtime] and posted to the Lambda API.
+typedef Handler<E extends Event> = Function(Context context, E event);
 
 class _RuntimeHandler {
   final Type type;
@@ -25,13 +24,12 @@ class _RuntimeHandler {
 /// returns the same instance of the [Runtime] everytime.
 ///
 /// ```dart
-/// final Handler<AwsS3NotificationEvent> helloWorldHandler =
-///   (context, event) async {
-///    return new InvocationResult(context.requestId, "HELLO WORLD");
+/// String helloWorldHandler(Context context, AwsS3NotificationEvent event) {
+///    return "HELLO WORLD";
 /// };
 ///
 /// final rt = Runtime()
-///   ..registerHandler<AwsS3NotificationEvent>("hello.world", helloWorld)
+///   ..registerHandler("hello.world", helloWorld);
 /// await rt.invoke();
 /// ```
 class Runtime {
@@ -54,35 +52,37 @@ class Runtime {
   /// with the runtime.
   bool handlerExists(String name) => _handlers.containsKey(name);
 
-  /// Register a handler function [Handler<T>] with [name]
-  /// which digests an event [T].
-  Handler<E> registerHandler<E>(String name, Handler<E> handler) {
+  /// Register a handler function [Handler<E>] with [name]
+  /// which digests an event [E].
+  ///
+  /// If you are using a custom event type it must be registered
+  /// before any handlers digesting it can be added.
+  void registerHandler<E extends Event>(String name, Handler<E> handler) {
+    assert(Event.exists<E>(), 'registered handler with unknown event type');
+    assert(!handlerExists(name), 'double registered $name handler');
     _handlers[name] = _RuntimeHandler(E, handler);
-
-    return handler;
   }
 
   /// Unregister a handler function [Handler] with [name].
-  Handler? deregisterHandler(String name) =>
-      _handlers.remove(name)?.handler as Handler?;
+  void deregisterHandler(String name) => _handlers.remove(name)?.handler;
 
   /// Register an new event to be ingested by a handler.
-  /// The type should reflect your type in your handler definition [Handler<T>].
-  void registerEvent<T>(T Function(Map<String, dynamic>) func) =>
-      Event.registerEvent<T>(func);
+  /// The type should reflect your type in your handler definition [Handler<E>].
+  void registerEvent<E extends Event>(EventParser<E> func) =>
+      Event.registerEvent<E>(func);
 
   /// Deregister an new event to be ingested by a handler.
-  /// The type should reflect your type in your handler definition [Handler<T>].
-  void deregisterEvent<T>() => Event.deregisterEvent<T>();
+  /// The type should reflect your type in your handler definition [Handler<E>].
+  void deregisterEvent<E extends Event>() => Event.deregisterEvent<E>();
 
   /// Run the [Runtime] in loop and digest events that are
   /// fetched from the AWS Lambda API Interface. The events are processed
   /// sequentially and are fetched from the AWS Lambda API Interface.
   ///
   /// If the invocation of an event was successful the function
-  /// sends the [InvocationResult] via [_client.postInvocationResponse(result)] to the API.
+  /// sends the result via [Client.postInvocationResponse] to the API.
   /// If there is an error during the execution. The exception gets caught
-  /// and the error is posted via [_client.postInvocationError(err)] to the API.
+  /// and the error is posted via [Client.postInvocationError] to the API.
   Future<void> invoke() async {
     while (true) {
       await _client.getNextInvocation().then(_handleInvocation);

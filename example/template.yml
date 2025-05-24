@@ -1,28 +1,28 @@
-AWSTemplateFormatVersion: "2010-09-09"
-Transform: AWS::Serverless-2016-10-31
-Description: A sample SAM template for deploying Lambda functions.
-
 Resources:
-  # Details about the myDateTimeFunction Lambda function
-  myExampleFunction:
-    Type: AWS::Serverless::Function
+  # A role is required for the lambda function, so create one here
+  # See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-iam-role.html
+  hello_apigateway_role:
+    Type: AWS::IAM::Role
     Properties:
+      RoleName: hello-gateway-lambda
+      AssumeRolePolicyDocument:
+        Statement:
+          - Action: sts:AssumeRole
+            Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+        Version: "2012-10-17"
+
+  # See https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-lambda-function.html
+  hello_apigateway:
+    Type: AWS::Lambda::Function
+    Properties:
+      Code:
+        S3Bucket: your-bucket-here
+        S3Key: dart-lambda-example.zip
+        S3ObjectVersion: obj-version-here
+      Architectures: arm64
+      Runtime: provided.al2023
       Handler: hello.apigateway
-      Runtime: Provided
-      # Instructs your myDateTimeFunction is published to an alias named "live".
-      AutoPublishAlias: live
-      # Grants this function permission to call lambda:InvokeFunction
-      Policies:
-        - Version: "2012-10-17"
-          Statement:
-            - Effect: "Allow"
-              Action:
-                - "lambda:InvokeFunction"
-              Resource: "*"
-      DeploymentPreference:
-        # Specifies the deployment configuration
-        Type: Linear10PercentEvery1Minute
-        # Specifies Lambda functions for deployment lifecycle hooks
-        Hooks:
-          PreTraffic: !Ref beforeAllowTraffic
-          PostTraffic: !Ref afterAllowTraffic
+      Role:
+        Fn::GetAtt: [hello_apigateway_role, Arn]
