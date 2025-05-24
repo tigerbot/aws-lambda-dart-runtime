@@ -6,13 +6,10 @@ part 'appsync_event.g.dart';
 /// App Sync Event ...
 @JsonSerializable()
 class AwsAppSyncEvent extends Event {
-  @JsonKey(name: 'version')
   final String? version;
 
-  @JsonKey(name: 'operation')
   final String? operation;
 
-  @JsonKey(name: 'payload')
   final String? payload;
 
   factory AwsAppSyncEvent.fromJson(Map<String, dynamic> json) =>

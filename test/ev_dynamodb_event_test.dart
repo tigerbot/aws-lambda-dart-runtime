@@ -14,7 +14,7 @@ void main() {
     test('json got parsed and creates an event', () async {
       final event = AwsDynamoDBUpdateEvent.fromJson(json!);
 
-      expect(event.records!.length, equals(1));
+      expect(event.records?.length, equals(1));
     });
   });
 }

@@ -5,18 +5,15 @@ part 'dynamodb_event.g.dart';
 
 /// Event send by a DynamoDB stream that contains
 /// the updated records in the DynamoDB table.
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.pascal)
 class AwsDynamoDBUpdateRecord extends Event {
   /// Keys ...
-  @JsonKey(name: 'Keys')
   final Map<String, dynamic>? keys;
 
   /// New Image ...
-  @JsonKey(name: 'NewImage')
   final Map<String, dynamic>? newImage;
 
   /// Old Image ....
-  @JsonKey(name: 'OldImage')
   final Map<String, dynamic>? oldImage;
 
   factory AwsDynamoDBUpdateRecord.fromJson(Map<String, dynamic> json) =>
@@ -30,31 +27,24 @@ class AwsDynamoDBUpdateRecord extends Event {
 /// DynamoDB Update Event Record ...
 @JsonSerializable()
 class AwsDynamoDBUpdateEventRecord {
-  @JsonKey()
   final AwsDynamoDBUpdateRecord? dynamodb;
 
   /// Event Id ...
-  @JsonKey()
   final String? eventId;
 
   /// Event Name ...
-  @JsonKey()
   final String? eventName;
 
   /// Event Source ...
-  @JsonKey()
   final String? eventSource;
 
   /// Event Version ...
-  @JsonKey()
   final String? eventVersion;
 
   /// AWS Region ...
-  @JsonKey()
   final String? awsRegion;
 
   /// Event Source ARN ...
-  @JsonKey()
   final String? eventSourceARN;
 
   factory AwsDynamoDBUpdateEventRecord.fromJson(Map<String, dynamic> json) =>
@@ -74,10 +64,9 @@ class AwsDynamoDBUpdateEventRecord {
 }
 
 /// DynamoDB Update Event ...
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.pascal)
 class AwsDynamoDBUpdateEvent extends Event {
   /// awslogs ...
-  @JsonKey(name: 'Records')
   final List<AwsDynamoDBUpdateEventRecord>? records;
 
   factory AwsDynamoDBUpdateEvent.fromJson(Map<String, dynamic> json) =>

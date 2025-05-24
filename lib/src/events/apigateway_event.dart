@@ -10,92 +10,74 @@ part 'apigateway_event.g.dart';
 /// It also contains a HTTP Status Code which by default is `200`.
 /// Furthermore it indicates if the [body] is Base64 encoded or not.
 class AwsApiGatewayResponse {
-  /// The body of the HTTP Response send from the API Gateway to the client.
-  String? body;
-
-  /// Indicates if the [body] is Base64 encoded or not. By default is `false`.
-  bool? isBase64Encoded;
-
   // HTTP Status Code of the response of the API Gateway to the client.
-  int? statusCode;
+  int statusCode;
+
+  /// Indicates if the [body] is Base64 encoded or not.
+  bool isBase64Encoded = false;
 
   /// The HTTP headers that should be send with the response to the client.
   Map<String, String>? headers;
 
+  /// The body of the HTTP Response send from the API Gateway to the client.
+  String? body;
+
   /// Returns the JSON representation of the response. This is called by
   /// the JSON encoder to produce the response.
   Map<String, dynamic> toJson() => {
-        if (body != null) 'body': body,
-        'isBase64Encoded': isBase64Encoded,
         'statusCode': statusCode,
-        if (headers != null) 'headers': headers
+        'isBase64Encoded': isBase64Encoded,
+        if (headers != null) 'headers': headers,
+        if (body != null) 'body': body,
       };
 
   /// The factory creates a new [AwsApiGatewayResponse] from JSON.
-  /// It optionally accepts the Base64 encoded flag and a HTTP Status Code
-  /// for the response.
+  /// It optionally a HTTP Status Code and additional headers for the response.
   factory AwsApiGatewayResponse.fromJson(
     Map<String, dynamic> body, {
-    bool isBase64Encoded = false,
     int statusCode = HttpStatus.ok,
     Map<String, String>? headers,
   }) {
     return AwsApiGatewayResponse(
-      body: json.encode(body),
-      isBase64Encoded: isBase64Encoded,
-      headers: headers,
       statusCode: statusCode,
+      headers: (headers ?? {})..addAll({'Content-Type': 'application/json'}),
+      body: json.encode(body),
     );
   }
 
-  /// The Response that should be returned by the API Gateway for the
-  /// Lambda invocation. It has a [body] which reflects the body of the HTTP Response.
-  /// But also it signals if the [body] is Base64 encoded and what the HTTP Status Code
-  /// of the response is.
   AwsApiGatewayResponse({
-    this.body,
+    this.statusCode = HttpStatus.ok,
     this.isBase64Encoded = false,
-    Map<String, String>? headers,
-    int? statusCode,
-  }) {
-    this.headers = headers ?? {'Content-Type': 'application/json'};
-    this.statusCode = statusCode ?? HttpStatus.ok;
-  }
+    this.headers,
+    this.body,
+  });
 }
 
 /// API Gateway Event ...
 @JsonSerializable()
 class AwsApiGatewayEvent extends Event {
   /// URL Path ...
-  @JsonKey()
   final String? path;
 
   /// Resource ...
-  @JsonKey()
   final String? resource;
 
   /// HTTP Method ...
-  @JsonKey()
   final String? httpMethod;
 
   /// Body ...
-  @JsonKey()
   final String? body;
 
   /// Headers ...
-  @JsonKey()
   final AwsApiGatewayEventHeaders? headers;
 
   /// Path Parameters ...
-  @JsonKey()
   final Map<String, dynamic>? pathParameters;
 
   /// Query String Parameters ...
-  @JsonKey()
   final Map<String, dynamic>? queryStringParameters;
 
   /// Stage Variables ...
-  @JsonKey()
   final Map<String, dynamic>? stageVariables;
 
   /// Request Context ...
@@ -106,16 +88,17 @@ class AwsApiGatewayEvent extends Event {
 
   Map<String, dynamic> toJson() => _$AwsApiGatewayEventToJson(this);
 
-  const AwsApiGatewayEvent(
-      {this.resource,
-      this.path,
-      this.httpMethod,
-      this.body,
-      this.headers,
-      this.queryStringParameters,
-      this.stageVariables,
-      this.requestContext,
-      this.pathParameters});
+  const AwsApiGatewayEvent({
+    this.resource,
+    this.path,
+    this.httpMethod,
+    this.body,
+    this.headers,
+    this.queryStringParameters,
+    this.stageVariables,
+    this.requestContext,
+    this.pathParameters,
+  });
 }
 
 /// API Gateway Event Headers ...
@@ -187,49 +170,37 @@ class AwsApiGatewayEventHeaders {
 
   Map<String, dynamic> toJson() => _$AwsApiGatewayEventHeadersToJson(this);
 
-  AwsApiGatewayEventHeaders(
-      {this.accept,
-      this.acceptEncoding,
-      this.cloudfrontIsDesktopViewer,
-      this.cloudfrontIsMobileViewer,
-      this.cloudfrontIsSmartTvViewer,
-      this.cloudfrontForwardProto,
-      this.cloudfrontIsTabletViewer,
-      this.cloudfrontViewerCountry,
-      this.upgradeInsecureRequests,
-      this.cacheControl,
-      this.host,
-      this.via,
-      this.userAgent,
-      this.xAmzCfId,
-      this.xAmznTraceId,
-      this.xForwardedFor,
-      this.xForwardedPort,
-      this.xForwardedProto});
+  AwsApiGatewayEventHeaders({
+    this.accept,
+    this.acceptEncoding,
+    this.cloudfrontIsDesktopViewer,
+    this.cloudfrontIsMobileViewer,
+    this.cloudfrontIsSmartTvViewer,
+    this.cloudfrontForwardProto,
+    this.cloudfrontIsTabletViewer,
+    this.cloudfrontViewerCountry,
+    this.upgradeInsecureRequests,
+    this.cacheControl,
+    this.host,
+    this.via,
+    this.userAgent,
+    this.xAmzCfId,
+    this.xAmznTraceId,
+    this.xForwardedFor,
+    this.xForwardedPort,
+    this.xForwardedProto,
+  });
 }
 
 /// API Gateway Event Request Context ...
 @JsonSerializable()
 class AwsApiGatewayEventRequestContext {
-  @JsonKey()
   final String? accountId;
-
-  @JsonKey()
   final String? resourceId;
-
-  @JsonKey()
   final String? stage;
-
-  @JsonKey()
   final String? requestId;
-
-  @JsonKey()
   final String? resourcePath;
-
-  @JsonKey()
   final String? httpMethod;
-
-  @JsonKey()
   final String? apiId;
 
   factory AwsApiGatewayEventRequestContext.fromJson(
@@ -239,50 +210,30 @@ class AwsApiGatewayEventRequestContext {
   Map<String, dynamic> toJson() =>
       _$AwsApiGatewayEventRequestContextToJson(this);
 
-  const AwsApiGatewayEventRequestContext(
-      {this.accountId,
-      this.resourceId,
-      this.stage,
-      this.requestId,
-      this.resourcePath,
-      this.httpMethod,
-      this.apiId});
+  const AwsApiGatewayEventRequestContext({
+    this.accountId,
+    this.resourceId,
+    this.stage,
+    this.requestId,
+    this.resourcePath,
+    this.httpMethod,
+    this.apiId,
+  });
 }
 
 /// API Gateway Event Identity
 @JsonSerializable()
 class AwsApiGatewayEventRequestContextIdentity {
-  @JsonKey()
   final String? cognitoIdentityPoolId;
-
-  @JsonKey()
   final String? accountId;
-
-  @JsonKey()
   final String? cognitoIdentityId;
-
-  @JsonKey()
   final String? caller;
-
-  @JsonKey()
   final String? apiKey;
-
-  @JsonKey()
   final String? sourceIp;
-
-  @JsonKey()
   final String? cognitoAuthenticationType;
-
-  @JsonKey()
   final String? cognitoAuthenticationProvider;
-
-  @JsonKey()
   final String? userArn;
-
-  @JsonKey()
   final String? userAgent;
-
-  @JsonKey()
   final String? user;
 
   factory AwsApiGatewayEventRequestContextIdentity.fromJson(
@@ -292,16 +243,17 @@ class AwsApiGatewayEventRequestContextIdentity {
   Map<String, dynamic> toJson() =>
       _$AwsApiGatewayEventRequestContextIdentityToJson(this);
 
-  const AwsApiGatewayEventRequestContextIdentity(
-      {this.cognitoIdentityPoolId,
-      this.cognitoAuthenticationProvider,
-      this.cognitoAuthenticationType,
-      this.caller,
-      this.accountId,
-      this.cognitoIdentityId,
-      this.apiKey,
-      this.sourceIp,
-      this.user,
-      this.userAgent,
-      this.userArn});
+  const AwsApiGatewayEventRequestContextIdentity({
+    this.cognitoIdentityPoolId,
+    this.cognitoAuthenticationProvider,
+    this.cognitoAuthenticationType,
+    this.caller,
+    this.accountId,
+    this.cognitoIdentityId,
+    this.apiKey,
+    this.sourceIp,
+    this.user,
+    this.userAgent,
+    this.userArn,
+  });
 }

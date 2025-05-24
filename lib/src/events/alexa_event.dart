@@ -7,15 +7,12 @@ part 'alexa_event.g.dart';
 @JsonSerializable()
 class AwsAlexaEventHeader {
   /// Version of the send payload.
-  @JsonKey()
   final String? payloadVersion;
 
   /// Namespace of the event.
-  @JsonKey()
   final String? namespace;
 
   /// Name of the event
-  @JsonKey()
   final String? name;
 
   factory AwsAlexaEventHeader.fromJson(Map<String, dynamic> json) =>
@@ -31,11 +28,9 @@ class AwsAlexaEventHeader {
 @JsonSerializable()
 class AwsAlexaEvent extends Event {
   /// Meta information about the event.
-  @JsonKey()
   final AwsAlexaEventHeader? header;
 
   /// Payload of the event send by Alexa.
-  @JsonKey()
   final Map<String, dynamic>? payload;
 
   factory AwsAlexaEvent.fromJson(Map<String, dynamic> json) =>

@@ -22,38 +22,30 @@ part 'cloudwatch_event.g.dart';
 ///   "detail": {}
 /// }
 /// ```
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.kebab)
 class AwsCloudwatchEvent extends Event {
   /// Resources ...
-  @JsonKey()
   final List<String>? resources;
 
   /// Region ...
-  @JsonKey()
   final String? region;
 
   /// Id ...
-  @JsonKey()
   final String? id;
 
   /// Source ...
-  @JsonKey()
   final String? source;
 
   /// Account ...
-  @JsonKey()
   final String? account;
 
   /// Data Type ...
-  @JsonKey(name: 'detail-type')
   final String? detailType;
 
   /// Detail ...
-  @JsonKey()
   final Map<String, dynamic>? detail;
 
   /// Time ...
-  @JsonKey()
   final DateTime? time;
 
   factory AwsCloudwatchEvent.fromJson(Map<String, dynamic> json) =>
@@ -61,13 +53,14 @@ class AwsCloudwatchEvent extends Event {
 
   Map<String, dynamic> toJson() => _$AwsCloudwatchEventToJson(this);
 
-  const AwsCloudwatchEvent(
-      {this.resources,
-      this.region,
-      this.id,
-      this.source,
-      this.account,
-      this.detailType,
-      this.detail,
-      this.time});
+  const AwsCloudwatchEvent({
+    this.resources,
+    this.region,
+    this.id,
+    this.source,
+    this.account,
+    this.detailType,
+    this.detail,
+    this.time,
+  });
 }

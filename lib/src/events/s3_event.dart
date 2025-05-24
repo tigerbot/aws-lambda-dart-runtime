@@ -5,9 +5,8 @@ part 's3_event.g.dart';
 
 /// Representing a recorded S3 Event send to the Lambda.
 /// This can be send in batches of operations.
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.pascal)
 class AwsS3Event extends Event {
-  @JsonKey(name: 'Records')
   final List<AwsS3EventRecord>? records;
 
   const AwsS3Event({this.records});
@@ -31,16 +30,17 @@ class AwsS3EventRecord {
   final Map<String, String>? responseElements;
   final AwsS3Data? s3;
 
-  const AwsS3EventRecord(
-      {this.eventName,
-      this.eventSource,
-      this.awsRegion,
-      this.eventTime,
-      this.eventVersion,
-      this.userIdentity,
-      this.requestParameters,
-      this.responseElements,
-      this.s3});
+  const AwsS3EventRecord({
+    this.eventName,
+    this.eventSource,
+    this.awsRegion,
+    this.eventTime,
+    this.eventVersion,
+    this.userIdentity,
+    this.requestParameters,
+    this.responseElements,
+    this.s3,
+  });
 
   factory AwsS3EventRecord.fromJson(Map<String, dynamic> json) =>
       _$AwsS3EventRecordFromJson(json);
@@ -55,8 +55,12 @@ class AwsS3Data {
   AwsS3Bucket? bucket;
   AWSS3EventObject? object;
 
-  AwsS3Data(
-      {this.s3SchemaVersion, this.configurationId, this.bucket, this.object});
+  AwsS3Data({
+    this.s3SchemaVersion,
+    this.configurationId,
+    this.bucket,
+    this.object,
+  });
 
   factory AwsS3Data.fromJson(Map<String, dynamic> json) =>
       _$AwsS3DataFromJson(json);
@@ -92,8 +96,13 @@ class AWSS3EventObject {
   /// a string representation of a hexadecimal value used to determine event sequence, only used with `PUT`s and `DELETE`s
   String? sequencer;
 
-  AWSS3EventObject(
-      {this.key, this.size, this.eTag, this.versionId, this.sequencer});
+  AWSS3EventObject({
+    this.key,
+    this.size,
+    this.eTag,
+    this.versionId,
+    this.sequencer,
+  });
 
   factory AWSS3EventObject.fromJson(Map<String, dynamic> json) =>
       _$AWSS3EventObjectFromJson(json);

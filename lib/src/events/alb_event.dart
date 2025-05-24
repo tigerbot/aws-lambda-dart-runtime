@@ -10,32 +10,25 @@ part 'alb_event.g.dart';
 class AwsALBEvent extends Event {
   /// Request context in which this request is executed.
   /// For the ELB this is the ARN of the target group.
-  @JsonKey()
   final AwsALBEventContext? context;
 
   /// HTTP method that is used to trigger the invocation of the Lambda.
-  @JsonKey()
   final String? httpMethod;
 
   /// The URI that is accessed to trigger the invocation of the Lambda.
-  @JsonKey()
   final String? path;
 
   /// HTTP headers that are send with the request to the load balancer.
-  @JsonKey()
   final Map<String, dynamic>? headers;
 
   /// The query parameters for the request to the load balancer.
-  @JsonKey()
   final Map<String, dynamic>? queryStringParameters;
 
   /// Body of the request. This can be data that is send with the POST
   /// to the request.
-  @JsonKey()
   final String? body;
 
   /// Singals that the request is Base64 encoded.
-  @JsonKey()
   final bool? isBase64Encoded;
 
   factory AwsALBEvent.fromJson(Map<String, dynamic> json) =>
@@ -81,7 +74,7 @@ class AwsALBResponse {
         'isBase64Encoded': isBase64Encoded,
         'statusCode': statusCode,
         'statusDescription': statusDescription,
-        'headers': headers
+        'headers': headers,
       };
 
   factory AwsALBResponse.fromString(

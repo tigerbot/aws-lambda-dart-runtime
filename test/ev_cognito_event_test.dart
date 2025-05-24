@@ -17,9 +17,9 @@ void main() {
       expect(event.version, equals(1));
       expect(event.userPoolId, equals('1234567'));
       expect(event.userName, equals('foo'));
-      expect(event.response!.smsMessage, equals('foo'));
-      expect(event.response!.emailSubject, equals('foo'));
-      expect(event.response!.emailMessage, equals('bar'));
+      expect(event.response?.smsMessage, equals('foo'));
+      expect(event.response?.emailSubject, equals('foo'));
+      expect(event.response?.emailMessage, equals('bar'));
     });
   });
 }

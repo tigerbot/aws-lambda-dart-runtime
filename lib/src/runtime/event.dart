@@ -6,9 +6,9 @@ import '../events/cloudwatch_event.dart';
 import '../events/cloudwatch_log_event.dart';
 import '../events/cognito_event.dart';
 import '../events/dynamodb_event.dart';
+import '../events/kinesis_data_stream_event.dart';
 import '../events/s3_event.dart';
 import '../events/sqs_event.dart';
-import '../events/kinesis_data_stream_event.dart';
 
 typedef EventParser<E extends Event> = E Function(Map<String, dynamic>);
 
@@ -17,17 +17,17 @@ typedef EventParser<E extends Event> = E Function(Map<String, dynamic>);
 abstract class Event {
   const Event();
   static final Map<Type, Function(Map<String, dynamic>)> _registry = {
-    AwsCognitoEvent: AwsCognitoEvent.fromJson,
-    AwsS3Event: AwsS3Event.fromJson,
-    AwsApiGatewayEvent: AwsApiGatewayEvent.fromJson,
-    AwsAppSyncEvent: AwsAppSyncEvent.fromJson,
     AwsALBEvent: AwsALBEvent.fromJson,
     AwsAlexaEvent: AwsAlexaEvent.fromJson,
-    AwsSQSEvent: AwsSQSEvent.fromJson,
+    AwsApiGatewayEvent: AwsApiGatewayEvent.fromJson,
+    AwsAppSyncEvent: AwsAppSyncEvent.fromJson,
     AwsCloudwatchEvent: AwsCloudwatchEvent.fromJson,
     AwsCloudwatchLogEvent: AwsCloudwatchLogEvent.fromJson,
+    AwsCognitoEvent: AwsCognitoEvent.fromJson,
     AwsDynamoDBUpdateEvent: AwsDynamoDBUpdateEvent.fromJson,
     AwsKinesisDataStreamEvent: AwsKinesisDataStreamEvent.fromJson,
+    AwsS3Event: AwsS3Event.fromJson,
+    AwsSQSEvent: AwsSQSEvent.fromJson,
   };
 
   /// Checks if a type of event is already registered.
