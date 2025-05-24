@@ -10,6 +10,8 @@ import '../events/kinesis_data_stream_event.dart';
 import '../events/s3_event.dart';
 import '../events/sqs_event.dart';
 
+/// A function which converts the JSON body from the
+/// Lambda Runtime API into [E].
 typedef EventParser<E extends Event> = E Function(Map<String, dynamic>);
 
 /// Event is the abstraction for every event that

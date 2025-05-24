@@ -27,41 +27,5 @@ void main() {
       expect(event.headers?.raw['Accept-Encoding'],
           equals('gzip, deflate, lzma, sdch, br'));
     });
-
-    test('factory creates event with default values', () {
-      final response = AwsApiGatewayResponse.fromJson({});
-
-      expect(response.body, equals({}.toString()));
-      expect(response.statusCode, equals(200));
-      expect(response.isBase64Encoded, equals(false));
-    });
-
-    test('factory creates an event with HTTP Status 400', () {
-      final response =
-          AwsApiGatewayResponse.fromJson({}, statusCode: HttpStatus.badRequest);
-
-      expect(response.body, equals({}.toString()));
-      expect(response.statusCode, equals(HttpStatus.badRequest));
-      expect(response.isBase64Encoded, equals(false));
-    });
-
-    test('factory creates an event with JSON Header', () {
-      final response = AwsApiGatewayResponse.fromJson({});
-
-      expect(response.headers, equals({'Content-Type': 'application/json'}));
-    });
-
-    test('factory creates an event additional headers', () {
-      final response = AwsApiGatewayResponse.fromJson({},
-          headers: {'Set-Cookie': 'saved_value=dummy'});
-
-      expect(
-        response.headers,
-        equals({
-          'Content-Type': 'application/json',
-          'Set-Cookie': 'saved_value=dummy',
-        }),
-      );
-    });
   });
 }

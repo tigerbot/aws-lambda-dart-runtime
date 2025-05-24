@@ -2,6 +2,7 @@ export 'src/events/alb_event.dart';
 export 'src/events/alexa_event.dart';
 export 'src/events/apigateway_event.dart';
 export 'src/events/appsync_event.dart';
+export 'src/events/aws_http_response.dart';
 export 'src/events/cloudwatch_event.dart';
 export 'src/events/cloudwatch_log_event.dart';
 export 'src/events/cognito_event.dart';
