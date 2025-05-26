@@ -7,12 +7,12 @@ import 'package:test/test.dart';
 final file = 'data/s3_event.json';
 
 final String contents = File(file).readAsStringSync();
-final json = jsonDecode(contents) as Map<String, dynamic>?;
+final json = jsonDecode(contents) as Map<String, dynamic>;
 
 void main() {
   group('s3_default', () {
     test('json got parsed and creates an event', () async {
-      final event = AwsS3Event.fromJson(json!);
+      final event = AwsS3Event.fromJson(json);
 
       expect(event.records?[0].eventVersion, equals('2.0'));
       expect(event.records?[0].eventSource, equals('aws:s3'));

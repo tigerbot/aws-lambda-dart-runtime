@@ -7,12 +7,12 @@ import 'package:test/test.dart';
 final file = 'data/kinesis_data_stream_event.json';
 
 final String contents = File(file).readAsStringSync();
-final json = jsonDecode(contents) as Map<String, dynamic>?;
+final json = jsonDecode(contents) as Map<String, dynamic>;
 
 void main() {
   group('kinesis_default', () {
     test('json got parsed and creates an event', () async {
-      final event = AwsKinesisDataStreamEvent.fromJson(json!);
+      final event = AwsKinesisDataStreamEvent.fromJson(json);
 
       expect(event.records?.length, equals(1));
       expect(event.records?[0].eventSource, equals('aws:kinesis'));

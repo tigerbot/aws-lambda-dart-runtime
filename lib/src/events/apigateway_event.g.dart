@@ -39,54 +39,6 @@ Map<String, dynamic> _$AwsApiGatewayEventToJson(AwsApiGatewayEvent instance) =>
       'requestContext': instance.requestContext,
     };
 
-AwsApiGatewayEventHeaders _$AwsApiGatewayEventHeadersFromJson(
-        Map<String, dynamic> json) =>
-    AwsApiGatewayEventHeaders(
-      accept: json['Accept'] as String?,
-      acceptEncoding: json['Accept-Encoding'] as String?,
-      cloudfrontIsDesktopViewer:
-          json['CloudFront-Is-Desktop-Viewer'] as String?,
-      cloudfrontIsMobileViewer: json['CloudFront-Is-Mobile-Viewer'] as String?,
-      cloudfrontIsSmartTvViewer:
-          json['CloudFront-Is-SmartTV-Viewer'] as String?,
-      cloudfrontForwardProto: json['CloudFront-Forwarded-Proto'] as String?,
-      cloudfrontIsTabletViewer: json['CloudFront-Is-Tablet-Viewer'] as String?,
-      cloudfrontViewerCountry: json['CloudFront-Viewer-Country'] as String?,
-      upgradeInsecureRequests: json['Upgrade-Insecure-Requests'] as String?,
-      cacheControl: json['Cache-Control'] as String?,
-      host: json['Host'] as String?,
-      via: json['Via'] as String?,
-      userAgent: json['User-Agent'] as String?,
-      xAmzCfId: json['X-Amz-Cf-Id'] as String?,
-      xAmznTraceId: json['X-Amzn-Trace-Id'] as String?,
-      xForwardedFor: json['X-Forwarded-For'] as String?,
-      xForwardedPort: json['X-Forwarded-Port'] as String?,
-      xForwardedProto: json['X-Forwarded-Proto'] as String?,
-    );
-
-Map<String, dynamic> _$AwsApiGatewayEventHeadersToJson(
-        AwsApiGatewayEventHeaders instance) =>
-    <String, dynamic>{
-      'Accept': instance.accept,
-      'Accept-Encoding': instance.acceptEncoding,
-      'CloudFront-Forwarded-Proto': instance.cloudfrontForwardProto,
-      'CloudFront-Is-Desktop-Viewer': instance.cloudfrontIsDesktopViewer,
-      'CloudFront-Is-Mobile-Viewer': instance.cloudfrontIsMobileViewer,
-      'CloudFront-Is-SmartTV-Viewer': instance.cloudfrontIsSmartTvViewer,
-      'CloudFront-Is-Tablet-Viewer': instance.cloudfrontIsTabletViewer,
-      'CloudFront-Viewer-Country': instance.cloudfrontViewerCountry,
-      'Host': instance.host,
-      'Upgrade-Insecure-Requests': instance.upgradeInsecureRequests,
-      'User-Agent': instance.userAgent,
-      'Via': instance.via,
-      'X-Amz-Cf-Id': instance.xAmzCfId,
-      'X-Forwarded-For': instance.xForwardedFor,
-      'X-Forwarded-Port': instance.xForwardedPort,
-      'X-Forwarded-Proto': instance.xForwardedProto,
-      'Cache-Control': instance.cacheControl,
-      'X-Amzn-Trace-Id': instance.xAmznTraceId,
-    };
-
 AwsApiGatewayEventRequestContext _$AwsApiGatewayEventRequestContextFromJson(
         Map<String, dynamic> json) =>
     AwsApiGatewayEventRequestContext(
