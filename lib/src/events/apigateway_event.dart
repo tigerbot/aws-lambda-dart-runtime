@@ -5,51 +5,48 @@ import 'package:json_annotation/json_annotation.dart';
 import '../runtime/event.dart';
 part 'apigateway_event.g.dart';
 
-/// API Gateway Response contains the data for a response
+///[AwsApiGatewayResponse] contains the data for a response
 /// to the API Gateway. It contains the [body] of the HTTP response.
 /// It also contains a HTTP Status Code which by default is `200`.
 /// Furthermore it indicates if the [body] is Base64 encoded or not.
 class AwsApiGatewayResponse {
-  // HTTP Status Code of the response of the API Gateway to the client.
-  int statusCode;
-
-  /// Indicates if the [body] is Base64 encoded or not.
-  bool isBase64Encoded = false;
+  /// HTTP Status Code of the response of the API Gateway to the client.
+  final int statusCode;
 
   /// The HTTP headers that should be send with the response to the client.
-  Map<String, String>? headers;
+  final Map<String, String>? headers;
 
   /// The body of the HTTP Response send from the API Gateway to the client.
-  String? body;
+  final String? body;
+
+  /// Indicates if the [body] is Base64 encoded or not.
+  final bool isBase64Encoded;
 
   /// Returns the JSON representation of the response. This is called by
   /// the JSON encoder to produce the response.
   Map<String, dynamic> toJson() => {
         'statusCode': statusCode,
-        'isBase64Encoded': isBase64Encoded,
         if (headers != null) 'headers': headers,
         if (body != null) 'body': body,
+        if (body != null) 'isBase64Encoded': isBase64Encoded,
       };
 
-  /// The factory creates a new [AwsApiGatewayResponse] from JSON.
+  /// Creates a new [AwsApiGatewayResponse] with a JSON object body.
   /// It optionally a HTTP Status Code and additional headers for the response.
-  factory AwsApiGatewayResponse.fromJson(
+  AwsApiGatewayResponse.fromJson(
     Map<String, dynamic> body, {
-    int statusCode = HttpStatus.ok,
+    this.statusCode = HttpStatus.ok,
     Map<String, String>? headers,
-  }) {
-    return AwsApiGatewayResponse(
-      statusCode: statusCode,
-      headers: (headers ?? {})..addAll({'Content-Type': 'application/json'}),
-      body: json.encode(body),
-    );
-  }
+  })  : headers = Map.from(headers ?? const {})
+          ..addAll({'Content-Type': 'application/json; charset=utf-8'}),
+        body = json.encode(body),
+        isBase64Encoded = false;
 
   AwsApiGatewayResponse({
     this.statusCode = HttpStatus.ok,
-    this.isBase64Encoded = false,
     this.headers,
     this.body,
+    this.isBase64Encoded = false,
   });
 }
 

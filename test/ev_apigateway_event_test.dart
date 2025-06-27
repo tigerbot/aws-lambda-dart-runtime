@@ -1,8 +1,8 @@
 import 'dart:io';
 import 'dart:convert';
+import 'package:test/test.dart';
 
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
-import 'package:test/test.dart';
 
 final file = 'data/apigateway_event.json';
 
@@ -25,41 +25,59 @@ void main() {
       expect(event.headers?['Accept-Encoding'],
           equals('gzip, deflate, lzma, sdch, br'));
     });
+  });
 
-    test('factory creates event with default values', () {
-      final response = AwsApiGatewayResponse.fromJson({});
+  group('AwsApiGatewayResponse', () {
+    const customHeaders = {'Set-Cookie': 'saved_value=dummy'};
 
-      expect(response.body, equals({}.toString()));
-      expect(response.statusCode, equals(200));
-      expect(response.isBase64Encoded, equals(false));
+    group('fromJson', () {
+      const addedHeader = {'Content-Type': 'application/json; charset=utf-8'};
+      test('with default values', () {
+        final response = AwsApiGatewayResponse.fromJson({});
+
+        expect(response.body, equals("{}"));
+        expect(response.statusCode, equals(200));
+        expect(response.headers, equals(addedHeader));
+        expect(response.isBase64Encoded, equals(false));
+      });
+
+      test('with all values', () {
+        final response = AwsApiGatewayResponse.fromJson({},
+            statusCode: HttpStatus.badRequest, headers: customHeaders);
+
+        expect(response.body, equals({}.toString()));
+        expect(response.statusCode, equals(HttpStatus.badRequest));
+        expect(response.isBase64Encoded, equals(false));
+        expect(response.headers,
+            equals(Map.from(customHeaders)..addAll(addedHeader)));
+      });
     });
 
-    test('factory creates an event with HTTP Status 400', () {
-      final response =
-          AwsApiGatewayResponse.fromJson({}, statusCode: HttpStatus.badRequest);
+    group('toJson', () {
+      test('with default values', () {
+        const expected = {'statusCode': 200};
+        final response = AwsApiGatewayResponse();
 
-      expect(response.body, equals({}.toString()));
-      expect(response.statusCode, equals(HttpStatus.badRequest));
-      expect(response.isBase64Encoded, equals(false));
-    });
+        expect(response.toJson(), equals(expected));
+      });
 
-    test('factory creates an event with JSON Header', () {
-      final response = AwsApiGatewayResponse.fromJson({});
+      test('with all values', () {
+        const b64Body = 'SGVsbG8gV29ybGQhCg==';
+        const expected = {
+          'statusCode': 400,
+          'headers': customHeaders,
+          'body': b64Body,
+          'isBase64Encoded': true,
+        };
+        final response = AwsApiGatewayResponse(
+          statusCode: 400,
+          headers: customHeaders,
+          body: b64Body,
+          isBase64Encoded: true,
+        );
 
-      expect(response.headers, equals({'Content-Type': 'application/json'}));
-    });
-
-    test('factory creates an event additional headers', () {
-      final response = AwsApiGatewayResponse.fromJson({},
-          headers: {'Set-Cookie': 'saved_value=dummy'});
-
-      expect(
-        response.headers,
-        equals({
-          'Content-Type': 'application/json',
-          'Set-Cookie': 'saved_value=dummy',
-        }),
-      );
+        expect(response.toJson(), equals(expected));
+      });
     });
   });
 }
