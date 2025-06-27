@@ -12,5 +12,16 @@ void main() {
         expect(e.stackTrace, isNotNull);
       }
     });
+
+    test('toJson succeeds without stackTrace', () {
+      const expected = {
+        'errorType': 'RuntimeError',
+        'errorMessage': 'foobar',
+        'stackTrace': null,
+      };
+      final err = InvocationError(type: 'RuntimeError', message: 'foobar');
+
+      expect(err.toJson(), equals(expected));
+    });
   });
 }

@@ -46,7 +46,8 @@ class Client {
 
     // "Container error. Non-recoverable state. Runtime should exit promptly."
     if (response.statusCode == HttpStatus.internalServerError) {
-      exit(1);
+      final errResponse = jsonDecode(response.body)['ErrorResponse'];
+      throw Exception(errResponse);
     }
   }
 }

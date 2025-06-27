@@ -29,10 +29,17 @@ class InvocationError extends Error {
 
 /// An exception thrown when a required OS environment value is missing.
 class MissingEnvException implements Exception {
-  const MissingEnvException(this.environmentKey);
-
   final String environmentKey;
+
+  const MissingEnvException(this.environmentKey);
 
   @override
   String toString() => "Missing OS enviroment value for $environmentKey";
+
+  @override
+  bool operator ==(Object other) =>
+      other is MissingEnvException && other.environmentKey == environmentKey;
+
+  @override
+  int get hashCode => Object.hash(environmentKey, null);
 }

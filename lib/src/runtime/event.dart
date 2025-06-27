@@ -10,13 +10,15 @@ import '../events/kinesis_data_stream_event.dart';
 import '../events/s3_event.dart';
 import '../events/sqs_event.dart';
 
+/// A function which converts the JSON body from the
+/// Lambda Runtime API into [E].
 typedef EventParser<E extends Event> = E Function(Map<String, dynamic>);
 
 /// Event is the abstraction for every event that
 /// can be ingested by a handler.
 abstract class Event {
   const Event();
-  static final Map<Type, Function(Map<String, dynamic>)> _registry = {
+  static final Map<Type, EventParser<Event>> _registry = {
     AwsALBEvent: AwsALBEvent.fromJson,
     AwsAlexaEvent: AwsAlexaEvent.fromJson,
     AwsApiGatewayEvent: AwsApiGatewayEvent.fromJson,
@@ -31,9 +33,7 @@ abstract class Event {
   };
 
   /// Checks if a type of event is already registered.
-  static bool exists<E extends Event>() {
-    return Event._registry.containsKey(E);
-  }
+  static bool exists<E extends Event>() => Event._registry.containsKey(E);
 
   /// Returs the parser of a registered event. It is `null`
   /// if no such event has been registered.
@@ -42,12 +42,12 @@ abstract class Event {
 
   /// Registers an event.
   static void registerEvent<E extends Event>(EventParser<E> func) =>
-      Event._registry[E] = func;
+      Event._registry[E] = func as EventParser<Event>;
 
   /// Deregisters an event.
   static void deregisterEvent<E extends Event>() => Event._registry.remove(E);
 
   /// Creates a new event for a handler from the invocation data.
-  static dynamic fromHandler(Type type, Map<String, dynamic> json) =>
+  static Event fromHandler(Type type, Map<String, dynamic> json) =>
       _registry[type]!(json);
 }

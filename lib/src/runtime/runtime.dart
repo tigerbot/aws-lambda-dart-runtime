@@ -69,12 +69,11 @@ class Runtime {
 
   /// Register an new event to be ingested by a handler.
   /// The type should reflect your type in your handler definition [Handler<E>].
-  void registerEvent<E extends Event>(EventParser<E> func) =>
-      Event.registerEvent<E>(func);
+  final registerEvent = Event.registerEvent;
 
   /// Deregister an new event to be ingested by a handler.
   /// The type should reflect your type in your handler definition [Handler<E>].
-  void deregisterEvent<E extends Event>() => Event.deregisterEvent<E>();
+  final deregisterEvent = Event.deregisterEvent;
 
   /// Run the [Runtime] in loop and digest events that are
   /// fetched from the AWS Lambda API Interface. The events are processed

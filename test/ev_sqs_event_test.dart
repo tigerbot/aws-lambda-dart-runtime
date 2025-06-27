@@ -7,12 +7,12 @@ import 'package:test/test.dart';
 final file = 'data/sqs_event.json';
 
 final String contents = File(file).readAsStringSync();
-final json = jsonDecode(contents) as Map<String, dynamic>?;
+final json = jsonDecode(contents) as Map<String, dynamic>;
 
 void main() {
   group('sqs_default', () {
     test('json got parsed and creates an event', () async {
-      final event = AwsSQSEvent.fromJson(json!);
+      final event = AwsSQSEvent.fromJson(json);
 
       expect(event.records?.length, equals(1));
       expect(event.records?[0].md5OfBody,

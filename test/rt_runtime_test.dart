@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'package:aws_lambda_runtime/src/runtime/environment.dart';
 import 'package:test/test.dart';
 
 import 'package:aws_lambda_runtime/aws_lambda_runtime.dart';
+import 'package:aws_lambda_runtime/src/runtime/environment.dart';
 
 void main() {
   group('runtime', () {
