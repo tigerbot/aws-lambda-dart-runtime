@@ -16,15 +16,13 @@ void main() {
 
       expect(event.body, equals(jsonEncode({'foo': 'bar'})));
       expect(event.path, equals('/test/hello'));
-      expect(event.headers?.acceptEncoding,
-          equals('gzip, deflate, lzma, sdch, br'));
       expect(event.requestContext?.httpMethod, equals('POST'));
       expect(event.requestContext?.accountId, equals('123456789012'));
       expect(event.requestContext?.requestId,
           equals('41b45ea3-70b5-11e6-b7bd-69b5aaebc7d9'));
       expect(event.queryStringParameters, equals({'name': 'me'}));
       expect(event.requestContext?.resourcePath, equals('/{proxy+}'));
-      expect(event.headers?.raw['Accept-Encoding'],
+      expect(event.headers?['Accept-Encoding'],
           equals('gzip, deflate, lzma, sdch, br'));
     });
 

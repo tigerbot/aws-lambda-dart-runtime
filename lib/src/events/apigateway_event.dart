@@ -101,95 +101,20 @@ class AwsApiGatewayEvent extends Event {
   });
 }
 
-/// API Gateway Event Headers ...
-@JsonSerializable()
+/// API Gateway Event Headers contains the headers of the
+/// request the gateway is handling. It handles header names
+/// as case-insensitive, so `headers['ACCEPT'] == headers['accept']`
 class AwsApiGatewayEventHeaders {
-  @JsonKey(name: 'Accept')
-  final String? accept;
+  final Map<String, String> _values;
 
-  @JsonKey(name: 'Accept-Encoding')
-  final String? acceptEncoding;
+  String? operator [](String index) => _values[index.toLowerCase()];
 
-  @JsonKey(name: 'CloudFront-Forwarded-Proto')
-  final String? cloudfrontForwardProto;
+  AwsApiGatewayEventHeaders.fromJson(Map<String, dynamic> json)
+      : _values = json.map(
+          (key, value) => MapEntry(key.toLowerCase(), value as String),
+        );
 
-  @JsonKey(name: 'CloudFront-Is-Desktop-Viewer')
-  final String? cloudfrontIsDesktopViewer;
-
-  @JsonKey(name: 'CloudFront-Is-Mobile-Viewer')
-  final String? cloudfrontIsMobileViewer;
-
-  @JsonKey(name: 'CloudFront-Is-SmartTV-Viewer')
-  final String? cloudfrontIsSmartTvViewer;
-
-  @JsonKey(name: 'CloudFront-Is-Tablet-Viewer')
-  final String? cloudfrontIsTabletViewer;
-
-  @JsonKey(name: 'CloudFront-Viewer-Country')
-  final String? cloudfrontViewerCountry;
-
-  @JsonKey(name: 'Host')
-  final String? host;
-
-  @JsonKey(name: 'Upgrade-Insecure-Requests')
-  final String? upgradeInsecureRequests;
-
-  @JsonKey(name: 'User-Agent')
-  final String? userAgent;
-
-  @JsonKey(name: 'Via')
-  final String? via;
-
-  @JsonKey(name: 'X-Amz-Cf-Id')
-  final String? xAmzCfId;
-
-  @JsonKey(name: 'X-Forwarded-For')
-  final String? xForwardedFor;
-
-  @JsonKey(name: 'X-Forwarded-Port')
-  final String? xForwardedPort;
-
-  @JsonKey(name: 'X-Forwarded-Proto')
-  final String? xForwardedProto;
-
-  @JsonKey(name: 'Cache-Control')
-  final String? cacheControl;
-
-  @JsonKey(name: 'X-Amzn-Trace-Id')
-  final String? xAmznTraceId;
-
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  late Map<String, dynamic> raw;
-
-  factory AwsApiGatewayEventHeaders.fromJson(Map<String, dynamic> json) {
-    final event = _$AwsApiGatewayEventHeadersFromJson(json);
-    event.raw = json;
-
-    return event;
-  }
-
-  Map<String, dynamic> toJson() => _$AwsApiGatewayEventHeadersToJson(this);
-
-  AwsApiGatewayEventHeaders({
-    this.accept,
-    this.acceptEncoding,
-    this.cloudfrontIsDesktopViewer,
-    this.cloudfrontIsMobileViewer,
-    this.cloudfrontIsSmartTvViewer,
-    this.cloudfrontForwardProto,
-    this.cloudfrontIsTabletViewer,
-    this.cloudfrontViewerCountry,
-    this.upgradeInsecureRequests,
-    this.cacheControl,
-    this.host,
-    this.via,
-    this.userAgent,
-    this.xAmzCfId,
-    this.xAmznTraceId,
-    this.xForwardedFor,
-    this.xForwardedPort,
-    this.xForwardedProto,
-  });
+  Map<String, dynamic> toJson() => _values.cast<String, dynamic>();
 }
 
 /// API Gateway Event Request Context ...
@@ -198,10 +123,15 @@ class AwsApiGatewayEventRequestContext {
   final String? accountId;
   final String? resourceId;
   final String? stage;
+  final String? eventType;
+  final String? routeKey;
+  final String? connectionId;
   final String? requestId;
+  final String? extendedRequestId;
   final String? resourcePath;
   final String? httpMethod;
   final String? apiId;
+  final String? domainName;
 
   factory AwsApiGatewayEventRequestContext.fromJson(
           Map<String, dynamic> json) =>
@@ -214,10 +144,15 @@ class AwsApiGatewayEventRequestContext {
     this.accountId,
     this.resourceId,
     this.stage,
+    this.eventType,
+    this.routeKey,
+    this.connectionId,
     this.requestId,
+    this.extendedRequestId,
     this.resourcePath,
     this.httpMethod,
     this.apiId,
+    this.domainName,
   });
 }
 

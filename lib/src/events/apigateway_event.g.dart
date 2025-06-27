@@ -39,64 +39,21 @@ Map<String, dynamic> _$AwsApiGatewayEventToJson(AwsApiGatewayEvent instance) =>
       'requestContext': instance.requestContext,
     };
 
-AwsApiGatewayEventHeaders _$AwsApiGatewayEventHeadersFromJson(
-        Map<String, dynamic> json) =>
-    AwsApiGatewayEventHeaders(
-      accept: json['Accept'] as String?,
-      acceptEncoding: json['Accept-Encoding'] as String?,
-      cloudfrontIsDesktopViewer:
-          json['CloudFront-Is-Desktop-Viewer'] as String?,
-      cloudfrontIsMobileViewer: json['CloudFront-Is-Mobile-Viewer'] as String?,
-      cloudfrontIsSmartTvViewer:
-          json['CloudFront-Is-SmartTV-Viewer'] as String?,
-      cloudfrontForwardProto: json['CloudFront-Forwarded-Proto'] as String?,
-      cloudfrontIsTabletViewer: json['CloudFront-Is-Tablet-Viewer'] as String?,
-      cloudfrontViewerCountry: json['CloudFront-Viewer-Country'] as String?,
-      upgradeInsecureRequests: json['Upgrade-Insecure-Requests'] as String?,
-      cacheControl: json['Cache-Control'] as String?,
-      host: json['Host'] as String?,
-      via: json['Via'] as String?,
-      userAgent: json['User-Agent'] as String?,
-      xAmzCfId: json['X-Amz-Cf-Id'] as String?,
-      xAmznTraceId: json['X-Amzn-Trace-Id'] as String?,
-      xForwardedFor: json['X-Forwarded-For'] as String?,
-      xForwardedPort: json['X-Forwarded-Port'] as String?,
-      xForwardedProto: json['X-Forwarded-Proto'] as String?,
-    );
-
-Map<String, dynamic> _$AwsApiGatewayEventHeadersToJson(
-        AwsApiGatewayEventHeaders instance) =>
-    <String, dynamic>{
-      'Accept': instance.accept,
-      'Accept-Encoding': instance.acceptEncoding,
-      'CloudFront-Forwarded-Proto': instance.cloudfrontForwardProto,
-      'CloudFront-Is-Desktop-Viewer': instance.cloudfrontIsDesktopViewer,
-      'CloudFront-Is-Mobile-Viewer': instance.cloudfrontIsMobileViewer,
-      'CloudFront-Is-SmartTV-Viewer': instance.cloudfrontIsSmartTvViewer,
-      'CloudFront-Is-Tablet-Viewer': instance.cloudfrontIsTabletViewer,
-      'CloudFront-Viewer-Country': instance.cloudfrontViewerCountry,
-      'Host': instance.host,
-      'Upgrade-Insecure-Requests': instance.upgradeInsecureRequests,
-      'User-Agent': instance.userAgent,
-      'Via': instance.via,
-      'X-Amz-Cf-Id': instance.xAmzCfId,
-      'X-Forwarded-For': instance.xForwardedFor,
-      'X-Forwarded-Port': instance.xForwardedPort,
-      'X-Forwarded-Proto': instance.xForwardedProto,
-      'Cache-Control': instance.cacheControl,
-      'X-Amzn-Trace-Id': instance.xAmznTraceId,
-    };
-
 AwsApiGatewayEventRequestContext _$AwsApiGatewayEventRequestContextFromJson(
         Map<String, dynamic> json) =>
     AwsApiGatewayEventRequestContext(
       accountId: json['accountId'] as String?,
       resourceId: json['resourceId'] as String?,
       stage: json['stage'] as String?,
+      eventType: json['eventType'] as String?,
+      routeKey: json['routeKey'] as String?,
+      connectionId: json['connectionId'] as String?,
       requestId: json['requestId'] as String?,
+      extendedRequestId: json['extendedRequestId'] as String?,
       resourcePath: json['resourcePath'] as String?,
       httpMethod: json['httpMethod'] as String?,
       apiId: json['apiId'] as String?,
+      domainName: json['domainName'] as String?,
     );
 
 Map<String, dynamic> _$AwsApiGatewayEventRequestContextToJson(
@@ -105,10 +62,15 @@ Map<String, dynamic> _$AwsApiGatewayEventRequestContextToJson(
       'accountId': instance.accountId,
       'resourceId': instance.resourceId,
       'stage': instance.stage,
+      'eventType': instance.eventType,
+      'routeKey': instance.routeKey,
+      'connectionId': instance.connectionId,
       'requestId': instance.requestId,
+      'extendedRequestId': instance.extendedRequestId,
       'resourcePath': instance.resourcePath,
       'httpMethod': instance.httpMethod,
       'apiId': instance.apiId,
+      'domainName': instance.domainName,
     };
 
 AwsApiGatewayEventRequestContextIdentity
